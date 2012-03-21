@@ -1,0 +1,20 @@
+bin/
+/lib/
+build/
+lib64/
+src/
+include/
+share/
+dist/
+*.db
+*.pyc
+*.pyd
+.project
+.pydevproject
+.settings
+*.pid
+migrations/
+# woops!
+notes/
+private_settings.py
+

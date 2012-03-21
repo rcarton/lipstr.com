@@ -1,0 +1,205 @@
+@import "normalize.less";
+
+
+/* ===== Primary Styles ========================================================
+   Author: rcarton / troebr.net
+   
+   ========================================================================== */
+
+/* ---- colors ---- */
+@zigzag-color: #eaeaea;
+@grey1: #2e2e2e;
+@greyborder: #e8e8e8;
+@mediumgrey: #4a4a4a;
+	
+.box-shadow(@values) {
+    -moz-box-shadow: @values;
+    -webkit-box-shadow: @values;
+    box-shadow: @values;
+}
+
+.default-box-shadow {
+    .box-shadow(hsla(0, 0%, 0%, 0.4) 0px 1px 3px);	
+}
+	
+.text-shadow(@values) {
+    -moz-text-shadow: @values;
+    -webkit-text-shadow: @values;
+    text-shadow: @values;
+}
+
+@duration1: 0.25s;
+.transition {
+    transition: all @duration1;
+    -webkit-transition: all @duration1;
+    -moz-transition: all @duration1;
+    -o-transition: all @duration1;
+}
+
+.button-gradient(@opacity) {
+    background: -moz-linear-gradient(top,  rgba(0,0,0,0) 0%, rgba(0,0,0,@opacity) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,@opacity))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,@opacity) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,@opacity) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,@opacity) 100%); /* IE10+ */
+    background: linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,@opacity) 100%); /* W3C */
+}
+
+.button {
+	@button-color: #fafafa;
+	
+    border-radius: 3px;
+    border: 1px solid darken(@button-color, 32%);
+    .button-gradient(0.1);
+    .box-shadow(inset rgba(255, 255, 255, 0.5) 0px 1px 0px);
+    .text-shadow(white 0px 1px 0px);
+    display: block;
+    padding: 0 8px;
+    text-align: center; 
+    line-height: 2em;
+    background-color: @button-color;
+    color: darken(@button-color, 40%);
+    .text-shadow(rgba(255, 255, 255, 0.35) 0px 1px 0px);
+    .transition;
+    
+    &:hover {
+        background-color: darken(@button-color, 2.5%);
+        cursor: pointer;
+        color: #06e;    
+    }
+}
+
+
+
+/* ---- helpers ---- */
+/* ---- Z-Indexing ----*/
+/* ---- Stylin' ---- */
+body{ 
+	font:12px/20px RobotoRegular, Helvetica, Helvetica Neue, Arial;
+    background: url(../img/bg-repeat-light.png);
+}
+
+h1, h2, h3, h4 { margin: 0; line-height: initial; color: @grey1; }
+ul, li {margin: 0; padding: 0;}
+li { list-style-type: none;}
+
+header {
+    background-image: url(../img/logo-small.png);
+	margin: 1em auto 1em auto;
+	background-repeat: no-repeat;
+	background-position: center;
+    height: 51px;
+    
+}
+
+/* --- login ---- */
+
+#login {
+	
+	background-image: url(../img/logo-small.png);  
+	margin: 0 auto;
+	width: 100%;
+	max-width: 250px;
+	padding-top: 200px;
+	background-repeat: no-repeat;
+    background-position: center 134px;
+	
+	form {
+	    padding: 1em 20px;
+	    text-align: center;
+	    .default-box-shadow;
+	    border-radius: 3px;
+	    background-color: white;
+	    
+	    input[type=text], input[type=password] {
+	        width: 99%;
+	        display: block;
+	        margin: 0 0 0.5em 0;
+	    }
+	    
+	    input[type=submit] {
+	        .button;
+	        margin: 1em auto 0 auto;
+	        font-size: 1.4em;
+	        font-weight: bold;
+	        padding: 0.5em 0.8em 0.5em 0.8em;
+	        display: inline-block;
+	    }
+	    
+	    h1 {
+	        color: #7D7D7D;
+	        padding-bottom: 0.5em;
+	    }
+    }
+}
+
+
+/* ---- list ---- */
+#list-container {
+    width: 80%;
+    margin: 0 10% 0 10%;	
+}
+
+
+li.list {
+    width: 100%;
+    margin: 1em 0;
+    padding-top: 4px;   /* prevent the shadows from being in the wrong column */
+    
+    .li-wrapper {
+        background-color: white;
+        box-shadow: hsla(0, 15%, 12%, 0.4) 0px 1px 3px 0px;
+    }
+    
+    &:first-child {
+        // We don't want the padding for the first column
+        margin-top: 0;
+    }
+    
+    h2 { 
+        
+        text-align: right;
+        font-family: 'Open Sans Condensed', sans serif;
+        font-size: 19px;
+        overflow: hidden;
+        margin: 0;
+        padding: 0 8px 0 0;
+        font-weight: 300;
+        color: @grey1;
+        
+    }
+    
+    ul.list {
+        
+        /*margin-top: @list_title_height;*/
+        
+        li {
+            
+            font-size: 11px;
+            line-height: 13px;
+            border-bottom: 1px solid @greyborder; 
+            color: @mediumgrey;
+            padding: 4px 4px 4px 7px;
+            overflow: hidden;
+            
+            &:hover {
+               cursor: pointer;
+               .transition;
+            }
+        }
+    }
+    
+    .add-task {
+        border: 0;
+        width: 100%;
+        /*position: fixed;
+        bottom: 0;
+        box-shadow: #ffffff 0px -@shadow_height @shadow_height;
+        border-top: 1px solid @greyborder; 
+        border: 0;*/
+        text-align: center;
+    }
+}
+
+@import "media-queries.less";
+@import "print.less";

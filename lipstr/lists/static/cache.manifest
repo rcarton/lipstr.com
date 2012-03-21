@@ -1,0 +1,35 @@
+CACHE MANIFEST
+
+#rev {{date}}
+
+CACHE:
+# libs
+http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js
+/static/js/libs/knockout-2.0.0.min.js
+/static/js/libs/less-1.2.2.min.js
+/static/js/libs/modernizr-2.5.3-respond-1.1.0.min.js
+/static/js/libs/jquery-1.7.1.min.js
+
+/static/js/utils.js
+/static/js/list.js
+
+# img
+/static/img/bg-repeat.png
+
+# less
+/static/less/helpers.less
+/static/less/media-queries.less
+/static/less/normalize.less
+/static/less/print.less
+/static/less/style.less
+
+# fonts
+/static/fonts/roboto/stylesheet.css
+/static/fonts/roboto/Roboto-Regular-webfont.eot
+/static/fonts/roboto/Roboto-Regular-webfont.woff
+/static/fonts/roboto/Roboto-Regular-webfont.ttf
+http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Open+Sans
+
+NETWORK:
+/list
+/actions

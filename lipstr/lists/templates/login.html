@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+
+<section id="login">    
+    
+    <form onkeypress="if(event.keyCode == 13) { $(this).submit(); }" action="{% url login %}{% if next %}?next={{next}}{% endif %}" method="post">{% csrf_token %}
+        <input type="text" name="username" placeholder="Email Address">
+        <input type="password" name="password" placeholder="Password">
+        <input type="submit" value="Login">
+    </form>
+</section>
+
+{% endblock %}
+

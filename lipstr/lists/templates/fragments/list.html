@@ -1,0 +1,28 @@
+
+<div id="list-container">
+    
+    <ul data-bind="foreach: tasklists, visible: tasklists().length > 0">
+        <li class="list" data-bind="attr: {'data-id': id}">
+            <div class="li-wrapper">
+                <h2 data-bind="text: title.toUpperCase(), attr: {style: 'background-color: hsl('+Math.floor(Math.random()*360)+', 60%, 80%);'} "></h2>
+                <ul class="list" data-bind="foreach: items, attr: {'data-id': id}, visible: items().length > 0">
+                    <li data-bind="text: description, taskClick: {click: function() { $root.remTask($parent, $data)}, longClick: editItem, dbClick: editItem}, attr: {'data-id': id}"></li>
+                </ul>
+                
+                <form data-bind="submit: function() { $root.addTask($data); }">
+                    <input class="add-task" data-bind="value: newTaskText" placeholder="What needs to be done?" />
+                    
+                    {# <button type="submit">Add</button>#}
+                </form>
+            </div>
+        </li>
+    </ul>
+    
+    <form id="add-list" data-bind="submit: function() { addTaskList($('form').children('[name=list_name]').val()); }">
+            <input type="text" name="list_name" placeholder="Name of your list">
+            <input class="button" type="submit" value="Add list">
+    </form>
+
+
+</div>
+
