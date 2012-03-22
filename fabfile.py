@@ -7,6 +7,7 @@ FILENAME = '%s_%s.tar.gz' % (APPNAME, VERSION)
 
 APPROOT = '/home/lipstr/lipstr.com'
 DEVROOT = os.path.dirname(os.path.abspath(__file__))
+DJANGOROOT = os.path.join(DEVROOT, 'lipstr')
 
 # the user to use for the remote commands
 env.user = 'lipstr'
@@ -19,9 +20,12 @@ env.deploy_user = 'lipstr'
 def up():
     pack()
     deploy()
-    update_manifest()
+    #update_manifest()
+    collect_static()
     restart()
     clean()
+
+
 
 
 def pack():
@@ -46,7 +50,11 @@ def deploy():
 def update_manifest():
     run('sed -i "s/{{date}}/%s/" %s/list/static/cache.manifest' % (VERSION, APPROOT))
         
-        
+def collect_static():
+    with cd(DJANGO_ROOT):
+        with settings(warn_only=True):
+            virtualenv("python manage.py collectstatic --noinput")
+            
 def restart():
     """Restart gunicorn."""
     with settings(warn_only=True):    

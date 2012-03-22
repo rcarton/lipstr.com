@@ -22,7 +22,7 @@ class ActionTest(TestCase):
     
     usertest = None
     
-    # helpers
+    # ---- helpers ----
     def get_user(self):
         if not ActionTest.usertest:
             ActionTest.usertest = User()
@@ -30,7 +30,6 @@ class ActionTest(TestCase):
             ActionTest.usertest.set_password('test')
             ActionTest.usertest.save()
         return ActionTest.usertest
-        
         
     def create_list(self, user=None):
         """Creates a list and returns the _id of that list."""
@@ -46,8 +45,33 @@ class ActionTest(TestCase):
                            }
                   }
         
-        ret = actions.add_list(action, user)    # Returns the id
-        return ret
+        list = actions.add_list(action, user)    # Returns the id
+        return list
+    
+    def add_task(self, list, description=None, id=None):
+        """Adds a task to the given list."""
+        from utils import get_random_string
+        
+        id = id or get_random_string(8)
+        description = description or 'this is my task description'
+        position = int(time.time()) # we use a timestamp in the js (for now)
+        
+        action = {
+                  'type': 'add_task',
+                  'listId': list.id,
+                  'what': {
+                           'id': id,
+                           'description': description,
+                           'position': position,
+                           },
+                  }
+        
+        actions.add_task(action, self.get_user())
+        return id
+    
+    # ----
+    
+    
     
     def test_create_list(self):
         user = self.get_user()
@@ -59,32 +83,47 @@ class ActionTest(TestCase):
                            'title': title
                            }
                   }
-        #import pdb; pdb.set_trace()
-        ret = actions.add_list(action, user)
-        self.assertTrue(ret)
-        self.assertEquals(List.objects.get(id=ret).title, title)
+        
+        list = actions.add_list(action, user)
+        self.assertEquals(list.title, title)
         
     def test_add_task(self):      
-        listId = self.create_list()
+        list = self.create_list()
         
         description = 'this is my task description'
-        id = 'abcdefgh'
+        taskid = 'abcdefgh'
         position = int(time.time()) # we use a timestamp in the js (for now)
         
         action = {
                   'type': 'add_task',
-                  'listId': listId,
+                  'listId': list.id,
                   'what': {
-                           'id': id,
+                           'id': taskid,
                            'description': description,
                            'position': position,
                            },
                   }
-        
         actions.add_task(action, self.get_user())
-        l = List.objects.get(id=listId)
+        list = List.objects.get(id=list.id)
+        self.assertEqual(len(list.items), 1)
+    
+    def test_rem_task(self):
+        list = self.create_list()
+        taskid = self.add_task(list, description='coucoulol')
+        list = List.objects.get(id=list.id)
+        self.assertEqual(1, len(list.items))
         
-        self.assertEqual(len(l.items), 1)
+        action = {
+          'type': 'rem_task',
+          'listId': list.id,
+          'what': {
+                   'id': taskid,
+                   },
+          }
+        
+        actions.rem_task(action, self.get_user())
+        list = List.objects.get(id=list.id)
+        self.assertEqual(0, len(list.items))
         
     def test_process_actions_create_list(self):
         pass

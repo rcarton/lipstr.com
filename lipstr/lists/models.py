@@ -29,6 +29,11 @@ class List(models.Model):
         userprofile = user.get_profile()
         return List.objects.filter(id__in=userprofile.lists)
     
+    def remove_item(self, item_id):
+        for i in xrange(len(self.items)):
+            if self.items[i].id == item_id: 
+                return self.items.pop(i)
+        return None
 
 class Item(models.Model):
     """This model should never be saved in a collection."""

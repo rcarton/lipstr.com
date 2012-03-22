@@ -52,9 +52,17 @@ def actions(request):
         except KeyError:
             return HttpResponseServerError("Malformed data!")
         
-        process_actions(actions, request.user)
+        modified_l, id_replacements  = process_actions(actions, request.user)
         
-        return HttpResponse(content_type='application/json', content=simplejson.dumps([l.to_obj() for l in List.get_lists_for_user(request.user)]))
+        lists_to_return = [l.to_obj() for l in modified_l]
+        
+        # Add tmp_id_replacement for new lists -> to replace the temporary ids in the DOM list
+        for tmp_id, new_id in id_replacements:
+            for l in lists_to_return:
+                if l['id'] == new_id:
+                    l['tmp_id_replacement'] = tmp_id;
+                
+        return HttpResponse(content_type='application/json', content=simplejson.dumps(lists_to_return))
     
 
 

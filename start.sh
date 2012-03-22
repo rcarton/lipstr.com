@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ~/home.troebr.net/home
+cd ~/lipstr.com/lipstr
 source ../bin/activate
 exec gunicorn_django -c ../gunicorn.conf.py
 

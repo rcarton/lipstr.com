@@ -13,7 +13,7 @@ Action structure:
     {
         'type':    <action type>,
         'what':    <action data>,
-        ['listId': <list id>]
+        'listId': <list id>
     }
 
 """
@@ -32,6 +32,7 @@ def add_task(action, user):
         'what': <item>
     }
     """
+    
     item = Item()
     item.description = action['what']['description']
     item.id = action['what']['id']
@@ -41,8 +42,24 @@ def add_task(action, user):
     l.items.append(item)
     l.save()
     
+    return l
+    
 def rem_task(action, user):
-    raise NotImplementedError
+    """
+    Removes a task.
+    
+    {
+        'type': 'rem_task',
+        'listId': <list temporary id>,
+        'what': <item>
+    }
+    """
+    
+    l = List.objects.get(id=action['listId'])
+    l.remove_item(action['what']['id'])
+    l.save()
+    
+    return l
 
 
 def add_list(action, user):
@@ -54,6 +71,11 @@ def add_list(action, user):
         'listId': <list temporary id>,
         'what': <list>
     }
+    
+    When a list is created on client side, a temporary id is generated (to allow
+    the creation of tasks relative to this list, especially if offline).
+    
+    This temporary id must be replaced by the new id used in the database.
     """
     
     # Create the list
@@ -67,7 +89,7 @@ def add_list(action, user):
     userprofile.lists.append(l.id)
     userprofile.save()
     
-    return l.id;
+    return l;
 
 
 def rem_list(action, user):
@@ -90,17 +112,21 @@ def process_actions(actions, user):
     
     #TODO: handle errors
     modified_lists = set()
+    tmp_id_to_new_ids = []  # [(<tmp id>, <new id>), ..]
+    
     while actions:
         action = actions.pop(0)
-        ret = process.get(action['type'])(action, user)
+        returned_list = process.get(action['type'])(action, user)
         
         # If there's a return value
-        if ret: modified_lists.add(ret)
+        if returned_list: modified_lists.add(returned_list)
         
         if action['type'] == 'add_list':
             # Change the temporary id to the new id in all the remaining actions
             for x in actions: 
                 if x.get('listId') == action['listId']: 
-                    x['listId'] = ret
+                    x['listId'] = returned_list.id
+            tmp_id_to_new_ids.append((action['listId'], returned_list.id))
     
+    return modified_lists, tmp_id_to_new_ids
         

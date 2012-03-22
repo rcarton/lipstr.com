@@ -14,9 +14,10 @@
  *  
  *  tasklist:
  *  {
- *  	id: '<id>',
- *  	title: '<title>'
- *  	items: [list of <task>]
+ *  	id: <id>,
+ *  	title: <title>,
+ *  	items: [list of <task>],
+ *  	[tmp_id_replacement: <tmp id to replace>] 
  *  }
  *  
  *  task: 
@@ -282,6 +283,8 @@ function TaskListViewModel(id) {
      */ 
     self.synchronizeLists = function(callback) {	
     	
+    	console.log('Synchronizing lists');
+    	
 		if (self.actions.length > 0) {
 			
             $.ajax("/actions", {
@@ -292,7 +295,7 @@ function TaskListViewModel(id) {
                 	// Clean up the actions
                 	self.actions = [];
                 	
-    				self.updateListsFromResponse(data.response, callback);
+    				self.updateListsFromResponse(data, callback);
                 },
                 error: function(data, status) {
                 	console.log('Error while synchronizing list: ' + status);
@@ -313,6 +316,13 @@ function TaskListViewModel(id) {
 		for (var i in response) {
 			var found = false;
 			for (var tl in self.tasklists()) {
+				
+				// Tmp id replacement
+				if (self.tasklists()[tl]['id'] == response[i]['tmp_id_replacement']) {
+					self.tasklists()[tl]['id'] = response[i]['id'];
+				}
+				
+				// Replace the list
 				if (self.tasklists()[tl]['id'] == response[i]['id']) {
 					self.tasklists.replace(self.tasklists()[tl], new TaskList(response[i]));
 					found = true;
