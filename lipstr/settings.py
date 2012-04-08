@@ -5,7 +5,7 @@ from private_settings import DATABASES, SECRET_KEY
 DJANGO_ROOT = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), '..')
 
-LOGIN_URL = '/hello'
+LOGIN_URL = '/login'
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

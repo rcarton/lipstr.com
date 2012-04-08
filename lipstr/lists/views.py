@@ -7,6 +7,7 @@ from django.template.context import RequestContext
 from django.utils import simplejson
 from lists.actions import process_actions
 from lists.models import List
+from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -39,9 +40,9 @@ def login(request):
 
 def disconnect(request):
     logout(request)
-    return redirect('/')
+    return redirect('login')
 
-
+@login_required
 def actions(request):
     """Updates the lists with the actions."""
     
@@ -65,7 +66,7 @@ def actions(request):
         return HttpResponse(content_type='application/json', content=simplejson.dumps(lists_to_return))
     
 
-
+@login_required
 def list(request):
     """Returns the lists of the user."""
     

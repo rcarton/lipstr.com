@@ -18,4 +18,4 @@ migrations/
 # woops!
 notes/
 private_settings.py
-
+*.swp
