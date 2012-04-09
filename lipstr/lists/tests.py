@@ -86,6 +86,25 @@ class ActionTest(TestCase):
         
         list = actions.add_list(action, user)
         self.assertEquals(list.title, title)
+
+    def test_create_multiple_list(self):
+        user = self.get_user()
+        title = 'title'
+        action = {
+                  'listId': 'tmp_id',
+                  'type': 'add_task',
+                  'what': {
+                           'title': title
+                           }
+                  }
+        
+        list = actions.add_list(action, user)
+        self.create_list()
+
+        # Make sure the user has more than 1 list now
+        ll = List.get_lists_for_user(user)
+        print ll
+        self.assertTrue(len(ll) > 1)
         
     def test_add_task(self):      
         list = self.create_list()

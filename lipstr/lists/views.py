@@ -9,7 +9,7 @@ from lists.actions import process_actions
 from lists.models import List
 from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def home(request):
     """Home page."""
     
