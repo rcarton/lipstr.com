@@ -93,7 +93,16 @@ def add_list(action, user):
 
 
 def rem_list(action, user):
-    raise NotImplementedError
+    """
+    Removes the list from the database.
+    
+    {
+        'type': 'rem_list',
+        'listId': <list id>
+    }
+    """
+    
+    l = List.objects.get(id=action['listId'])
 
 
 def process_actions(actions, user):
@@ -115,6 +124,9 @@ def process_actions(actions, user):
     tmp_id_to_new_ids = []  # [(<tmp id>, <new id>), ..]
     
     while actions:
+        
+        #TODO: verify that the user is allowed to modify that list
+        
         action = actions.pop(0)
         returned_list = process.get(action['type'])(action, user)
         

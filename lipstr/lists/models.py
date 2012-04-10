@@ -9,7 +9,7 @@ class List(models.Model):
     
     title = models.CharField(max_length=128)
     when = models.DateField(auto_now_add=True)
-    creator = models.OneToOneField(User)
+    creator = models.ForeignKey(User)
     items = ListField(EmbeddedModelField('Item'))
     
     def to_obj(self):

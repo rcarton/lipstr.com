@@ -39,7 +39,7 @@ class ActionTest(TestCase):
         title = 'title'
         action = {
                   'listId': 'tmp_id',
-                  'type': 'add_task',
+                  'type': 'add_list',
                   'what': {
                            'title': title
                            }
@@ -78,7 +78,7 @@ class ActionTest(TestCase):
         title = 'title'
         action = {
                   'listId': 'tmp_id',
-                  'type': 'add_task',
+                  'type': 'add_list',
                   'what': {
                            'title': title
                            }
@@ -92,13 +92,14 @@ class ActionTest(TestCase):
         title = 'title'
         action = {
                   'listId': 'tmp_id',
-                  'type': 'add_task',
+                  'type': 'add_list',
                   'what': {
                            'title': title
                            }
                   }
         
         list = actions.add_list(action, user)
+        import pdb; pdb.set_trace()
         self.create_list()
 
         # Make sure the user has more than 1 list now
