@@ -1,13 +1,14 @@
 from django.contrib import auth
 from django.contrib.auth import authenticate, logout
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponseServerError, \
-    HttpResponse
+    HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render_to_response, redirect
 from django.template.context import RequestContext
 from django.utils import simplejson
 from lists.actions import process_actions
+from lists.forms import SignupForm
 from lists.models import List
-from django.contrib.auth.decorators import login_required
 
 @login_required
 def home(request):
@@ -82,6 +83,19 @@ def list(request):
     
     return HttpResponse(content_type='application/json', content=simplejson.dumps(lists))
     
+def signup(request):
+    
+    # Form has been submitted
+    if request.method == 'POST': # If the form has been submitted...
+        form = SignupForm(request.POST) # A form bound to the POST data
+        if not form.is_valid():
+            return HttpResponse(content_type='application/json', content=simplejson.dumps({'errors': form.errors}))
+        else:
+            return HttpResponse(content_type='application/json', content='{}')
+    
+    
+    # Display the regular page
+    return render_to_response('signup.html', RequestContext(request, {}))
     
     
     

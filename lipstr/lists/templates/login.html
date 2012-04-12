@@ -1,15 +1,46 @@
 {% extends "base.html" %}
 
+{% block custom-css-files %}
+
+<style>
+body {
+    background-color: #60b9da;
+    background-image: url('{{STATIC_URL}}img/login-bg-gradient.png');
+    background-position: center 0px;
+    background-repeat: no-repeat;
+}   
+</style>
+
+{% endblock %}
 
 {% block body %}
 
 <section id="login">    
     
+    {% block login %}
+    
     <form onkeypress="if(event.keyCode == 13) { $(this).submit(); }" action="{% url login %}{% if next %}?next={{next}}{% endif %}" method="post">{% csrf_token %}
-        <input type="text" name="username" placeholder="Email Address">
-        <input type="password" name="password" placeholder="Password">
+        <div id="login-left">
+            <input type="text" name="username" placeholder="Email Address">
+            <input type="password" name="password" placeholder="Password">
+        </div>
         <input type="submit" value="Login">
+        <p id="forgot-your-password">forgot your password?</p>
+        <div style="clear: both"></div>
     </form>
+    
+    <div id="or-login-with">
+        <p>or login with:</p>
+       
+    </div>
+    
+    <div id="you-dont-have-an-account">
+        <p>you don't have an account?</p>
+        <p>sign up <a href="/signup">here</a> or try the <a href="">anonymous version</a>.</p>
+    </div>
+    
+    {% endblock %}
+    
 </section>
 
 {% endblock %}

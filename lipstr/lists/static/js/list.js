@@ -98,7 +98,8 @@ Action.getRemTaskAction = function(task, listId) { return new Action('rem_task',
 // add_list {type: 'add_list', what: <tasklist>
 Action.getAddTaskListAction = function(tasklist) { return new Action('add_list', tasklist.toObj(), tasklist.id); }
 
-
+//rem_list {type: 'rem_list', what: <tasklist>
+Action.getRemListAction = function(list) { return new Action('rem_list', {}, list.id); }
 
 function Task(id, description, position) {
 	var self = this;
@@ -184,6 +185,27 @@ function TaskListViewModel(id) {
 		var tl = TaskList.getTaskList(title);
 		self.tasklists.push(tl);
 		self.actions.push(Action.getAddTaskListAction(tl).toObj());
+		
+		// Clear the field
+		$('#add-list-input').val('');
+		
+		
+		
+		if (isOnline()) {
+    		self.synchronizeLists(function() { tl.focus(); });
+    	} else {
+    		self.saveLocal();
+    		tl.focus();
+    	}
+	}
+	
+	self.remList = function(list) {
+		
+		// Confirmation
+		if (!confirm("Are you sure you want to remove the list '" + list.title + "'?")) return;
+		
+		self.tasklists.remove(list);
+		self.actions.push(Action.getRemListAction(list).toObj());
 		
 		if (isOnline()) {
     		self.synchronizeLists();
@@ -314,6 +336,7 @@ function TaskListViewModel(id) {
      */
     self.updateListsFromResponse = function(response, callback) {
 		for (var i in response) {
+			
 			var found = false;
 			for (var tl in self.tasklists()) {
 				

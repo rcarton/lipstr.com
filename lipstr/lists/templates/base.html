@@ -14,14 +14,15 @@
     <!-- Fonts -->
     <link rel="stylesheet/less" href="static/fonts/roboto/stylesheet.css">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Open+Sans' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Arvo:400,700' rel='stylesheet' type='text/css'>
     
     <!-- Less stylesheets  -->
     
-    {% block custom-css-files %}{% endblock %}
     
 	<link rel="stylesheet/less" href="{{STATIC_URL}}less/style.less">
 	<script src="{{STATIC_URL}}js/libs/less-1.2.2.min.js"></script>
 	
+    {% block custom-css-files %}{% endblock %}
     
 	{% comment %}<!-- Use SimpLESS (Win/Linux/Mac) or LESS.app (Mac) to compile your .less files
 	to style.css, and replace the 2 lines above by this one:

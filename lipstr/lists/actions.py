@@ -102,8 +102,13 @@ def rem_list(action, user):
     }
     """
     
-    l = List.objects.get(id=action['listId'])
-
+    try:
+        l = List.objects.get(id=action['listId'])
+        l.delete()
+    except:
+        # Todo handle the real cases
+        pass
+    
 
 def process_actions(actions, user):
     """

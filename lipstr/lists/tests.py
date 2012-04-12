@@ -5,10 +5,10 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
+from django.contrib.auth.models import User
 from django.test import TestCase
 from lists import actions
 from lists.models import *
-from django.contrib.auth.models import User
 import time
 
 
@@ -99,13 +99,27 @@ class ActionTest(TestCase):
                   }
         
         list = actions.add_list(action, user)
-        import pdb; pdb.set_trace()
+        
         self.create_list()
 
         # Make sure the user has more than 1 list now
         ll = List.get_lists_for_user(user)
-        print ll
         self.assertTrue(len(ll) > 1)
+    
+    def test_rem_list(self):
+        list = self.create_list()
+        
+        self.assertEquals(list.id, List.objects.get(id=list.id).id)
+        action = {
+                  'type': 'rem_list',
+                  'listId': list.id
+                  }
+        actions.rem_list(action, self.get_user())
+        try:
+            List.objects.get(id=list.id)
+        except List.DoesNotExist:
+            pass
+        
         
     def test_add_task(self):      
         list = self.create_list()

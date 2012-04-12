@@ -4,7 +4,14 @@
     <ul data-bind="foreach: tasklists, visible: tasklists().length > 0">
         <li class="list" data-bind="attr: {'data-id': id}">
             <div class="li-wrapper">
-                <h2 data-bind="text: title.toUpperCase(), attr: {style: 'background-color: hsl('+Math.floor(Math.random()*360)+', 60%, 80%);'} "></h2>
+                
+                {# ---- List header ---- #}
+                <div class="li-header" data-bind="attr: {style: 'background-color: hsl('+Math.floor(Math.random()*360)+', 60%, 80%);'}">
+                    <span class="li-button" data-bind="click: function() { $root.remList($data); }">remove</span>
+                    <h2 class="li-title" data-bind="text: title.toUpperCase()"></h2>
+                </div>
+                
+                {# ---- List content ---- #}
                 <ul class="list" data-bind="foreach: items, attr: {'data-id': id}, visible: items().length > 0">
                     <li data-bind="text: description, taskClick: {click: function() { $root.remTask($parent, $data)}, longClick: editItem, dbClick: editItem}, attr: {'data-id': id}"></li>
                 </ul>
@@ -19,7 +26,7 @@
     </ul>
     
     <form id="add-list" data-bind="submit: function() { addTaskList($('form').children('[name=list_name]').val()); }">
-            <input type="text" name="list_name" placeholder="Name of your list">
+            <input type="text" id="add-list-input" name="list_name" placeholder="Name of your list">
             <input class="button" type="submit" value="Add list">
     </form>
     
