@@ -8,10 +8,10 @@ function signup() {
         success: function(data) {
         	if(data.errors != undefined) {
         		// Error case
-        		handleErrorForm(data.errors)
+        		handleErrorForm($('#signup'), data.errors)
         	} else {
         		// Registraiton successful
-        		// TODO
+        		window.location.href = data.next
         	}
         },
         error: function(data, status) {
@@ -22,39 +22,6 @@ function signup() {
 	return false;
 }
 
-function handleErrorForm(errors) {
-	
-	// Clean the errors
-	$('.signup-error').remove();
-	
-	// For each of the field with an error display it
-	var errorDiv;
-	var errorMsg;
-	var jErrorField;
-	
-	for (var errorField in errors) {
-		errorMsg = errors[errorField];
-		jErrorField= $('#' + errorField);
-		
-		errorDiv = document.createElement('div');
-		errorDiv.setAttribute('class', 'signup-error');
-		errorDiv.setAttribute('id', errorField + '-error');
-		
-		// Edit the text
-		while(errorDiv.childNodes.length >= 1) errorDiv.removeChild(errorDiv.firstChild);
-		errorDiv.appendChild(errorDiv.ownerDocument.createTextNode(errorMsg));
-		
-		// Position it
-		errorDiv.style.left = jErrorField.position().left + jErrorField.width() + 'px'; 
-		errorDiv.style.top = jErrorField.position().top + 'px'; 
-		
-		$('#signup').append(errorDiv);
-		
-		$(errorDiv).effect('bounce', { times: 2, distance: 5, direction: 'left' }, 300);
-	}
-	
-	
-}
 
 
 $(document).ready(function() {

@@ -1,6 +1,7 @@
 from django.contrib import auth
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponseServerError, \
     HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render_to_response, redirect
@@ -25,9 +26,6 @@ def login(request):
     
     next = request.GET.get('next', '')
     
-    if request.user.is_authenticated():
-        return redirect(next or '/')
-    
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -35,8 +33,17 @@ def login(request):
         if user is not None:
             next = next or '/'
             auth.login(request, user)
-            return redirect(next)
+            return HttpResponse(content_type='application/json', content=simplejson.dumps({'next': next or '/'}))
+        else:
+            try:
+                User.objects.get(username=username)
+                return HttpResponse(content_type='application/json', content=simplejson.dumps({'errors': {'password': 'Wrong password.'}}))
+            except User.DoesNotExist:  
+                return HttpResponse(content_type='application/json', content=simplejson.dumps({'errors': {'username': 'User not found.'}}))
     else:
+        if request.user.is_authenticated():
+            return redirect(next or '/')
+        
         return render_to_response('login.html', RequestContext(request, {'next': next}))
 
 def disconnect(request):
@@ -85,17 +92,46 @@ def list(request):
     
 def signup(request):
     
+    next = request.GET.get('next', '/')
+    
     # Form has been submitted
     if request.method == 'POST': # If the form has been submitted...
         form = SignupForm(request.POST) # A form bound to the POST data
         if not form.is_valid():
             return HttpResponse(content_type='application/json', content=simplejson.dumps({'errors': form.errors}))
         else:
-            return HttpResponse(content_type='application/json', content='{}')
+            
+            # Create the account
+            errors = create_account(form)
+            if errors: return HttpResponse(content_type='application/json', content=simplejson.dumps({'errors': errors}))
+            
+            # Authenticate the user
+            user = authenticate(username=form['email'].value(), password=form['password'].value())
+            auth.login(request, user)
+            
+            return HttpResponse(content_type='application/json', content=simplejson.dumps({'next': next}))
     
     
     # Display the regular page
     return render_to_response('signup.html', RequestContext(request, {}))
     
+def create_account(signup_form):
     
+    # User exists
+    try:
+        if User.objects.get(username=signup_form['email'].value()):
+            return {'email': 'You already have an account.'}
+    except User.DoesNotExist:
+        pass
+    
+    user = User()
+    user.username = signup_form['email'].value()
+    user.email = signup_form['email'].value()
+    user.set_password(signup_form['password'].value())
+    
+    if signup_form['firstname']: user.first_name = signup_form['firstname'].value()
+    
+    user.save()
+    
+    return {}
     

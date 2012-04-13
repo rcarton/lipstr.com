@@ -51,7 +51,7 @@ def update_manifest():
     run('sed -i "s/{{date}}/%s/" %s/list/static/cache.manifest' % (VERSION, APPROOT))
         
 def collect_static():
-    with cd(DJANGO_ROOT):
+    with cd(DJANGOROOT):
         with settings(warn_only=True):
             virtualenv("python manage.py collectstatic --noinput")
             

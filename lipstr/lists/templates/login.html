@@ -13,13 +13,23 @@ body {
 
 {% endblock %}
 
+{% block custom-js %}
+    
+    <script>
+        var LOGIN_URL = '{% url login %}{% if next %}?next={{next}}{% endif %}';
+    </script>
+
+    <script src="{{STATIC_URL}}js/login.js"></script>
+    <script src="{{STATIC_URL}}js/libs/jquery-ui-1.8.18.bounce.min.js"></script>
+{% endblock %}
+
 {% block body %}
 
 <section id="login">    
     
     {% block login %}
     
-    <form onkeypress="if(event.keyCode == 13) { $(this).submit(); }" action="{% url login %}{% if next %}?next={{next}}{% endif %}" method="post">{% csrf_token %}
+    <form id="loginform">
         <div id="login-left">
             <input type="text" name="username" placeholder="Email Address">
             <input type="password" name="password" placeholder="Password">

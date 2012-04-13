@@ -8,7 +8,9 @@ Replace this with more appropriate tests for your application.
 from django.contrib.auth.models import User
 from django.test import TestCase
 from lists import actions
+from lists.forms import SignupForm
 from lists.models import *
+from lists.views import create_account
 import time
 
 
@@ -163,4 +165,30 @@ class ActionTest(TestCase):
         pass
 
 
+class ViewsTest(TestCase):
+    
+    def test_create_user(self):
+        email = 'test@test.com'
+        form = { 
+                'email': email,
+                'password': 'password',
+                'firstname': 'Robert',
+               }
+        errors = create_account(form)
+        
+        self.assertEqual(0, len(errors))
+        self.assertEqual(1, User.objects.filter(username=email).count())
+    
+    def test_create_user__users_exists(self):
+        email = 'test@test.com'
+        form = { 
+                'email': email,
+                'password': 'password',
+                'firstname': 'Robert',
+               }
+        errors = create_account(form)
+        errors = create_account(form)
+        
+        self.assertEqual(1, len(errors))
+        self.assertEqual(1, User.objects.filter(username=email).count())
         

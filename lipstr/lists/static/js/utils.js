@@ -110,3 +110,49 @@ jQuery(document).ajaxSend(function(event, xhr, settings) {
         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
     }
 });
+
+
+
+/* ---- Forms ---- */
+function handleErrorForm(jForm, errors, direction) {
+	
+	if (!direction) direction = 'left'
+	
+	// Clean the errors
+	$('.form-error').remove();
+	
+	// For each of the field with an error display it
+	var errorDiv;
+	var errorMsg;
+	var jErrorField;
+	
+	for (var errorField in errors) {
+		errorMsg = errors[errorField];
+		jErrorField= jForm.find('input[name="'+ errorField +'"]');
+		
+		errorDiv = document.createElement('div');
+		errorDiv.setAttribute('class', 'form-error ' + direction);
+		errorDiv.setAttribute('id', errorField + '-error');
+		
+		// Edit the text
+		while(errorDiv.childNodes.length >= 1) errorDiv.removeChild(errorDiv.firstChild);
+		errorDiv.appendChild(errorDiv.ownerDocument.createTextNode(errorMsg));
+		
+		// Position it
+		
+		if (direction == 'down') {
+			/*errorDiv.style.left = jErrorField.position().left + jErrorField.width() + 'px';*/ 
+			errorDiv.style.top = jErrorField.position().top - 30 + 'px'; 
+		} else {
+			errorDiv.style.left = jErrorField.position().left + jErrorField.width() + 'px'; 
+			errorDiv.style.top = jErrorField.position().top + 'px'; 
+		}
+
+		
+		jForm.append(errorDiv);
+		
+		$(errorDiv).effect('bounce', { times: 2, distance: 5, direction: direction }, 300);
+	}
+}
+
+
