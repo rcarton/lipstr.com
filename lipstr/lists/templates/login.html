@@ -29,7 +29,7 @@ body {
     
     {% block login %}
     
-    <form id="loginform">
+    <form id="loginform">{% csrf_token %}
         <div id="login-left">
             <input type="text" name="username" placeholder="Email Address">
             <input type="password" name="password" placeholder="Password">

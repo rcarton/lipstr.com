@@ -12,7 +12,7 @@
 
 {% block login %}
     
-    <form id="signup">
+    <form id="signup">{% csrf_token %}
         <label for="email">Email Address</label>
         <input type="text" id="email" name="email">
         

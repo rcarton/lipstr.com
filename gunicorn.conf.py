@@ -1,9 +1,11 @@
+import os
+
 bind = "0.0.0.0:8005"  # Or "unix:/tmp/gunicorn.sock"
 daemon = True            # Whether work in the background
 debug = False            # Some extra logging
 errorlog = "/var/log/gunicorn/lipstr.com/lipstr.log" # Name of the log file
 loglevel = "info"        # The level at which to log
-pidfile = "gunicorn.pid" # Path to a PID file
+pidfile =  os.path.join(os.path.abspath(os.path.dirname(__file__)), 'gunicorn.pid') # Path to a PID file
 workers = 2              # Number of workers to initialize
 umask = 0                # Umask to set when daemonizing
 user = None              # Change process owner to user
