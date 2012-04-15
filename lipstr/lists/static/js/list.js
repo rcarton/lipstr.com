@@ -373,4 +373,14 @@ function TaskListViewModel(id) {
 ko.applyBindings(new TaskListViewModel());
 
 
+$(document).ready(function() {
+	
+	$('#logo-header').click(function() {
+		window.document.location = '/';
+	});
+	
+	
+});
+
+
 
