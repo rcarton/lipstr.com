@@ -211,7 +211,7 @@ function TaskListViewModel(id) {
 	self.remList = function(list) {
 		
 		// Confirmation
-		if (!confirm("Are you sure you want to remove the list '" + list.title + "'?")) return;
+		if (!confirm("Are you sure you want to remove the list '" + list.title() + "'?")) return;
 		
 		self.tasklists.remove(list);
 		self.actions.push(Action.getRemListAction(list).toObj());
