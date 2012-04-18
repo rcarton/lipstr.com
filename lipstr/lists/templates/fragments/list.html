@@ -7,8 +7,14 @@
                 
                 {# ---- List header ---- #}
                 <div class="li-header" data-bind="attr: {style: 'background-color: hsl('+Math.floor(Math.random()*360)+', 60%, 80%);'}">
-                    <span class="li-button" data-bind="click: function() { $root.remList($data); }">remove</span>
-                    <h2 class="li-title" data-bind="text: title.toUpperCase()"></h2>
+                    <div class="li-menu" data-bind="click: TaskList.toggleLiMenu">
+                        <div class="li-button"> </div>
+                        <ul class="li-menu-dropdown">
+                            <li><a href="" data-bind="click: function() { $data.renameList(); }">rename list</a></li>
+                            <li><a href="" data-bind="click: function() { $root.remList($data); }">remove list</a></li>
+                        </ul>
+                    </div>
+                    <h2 class="li-title" data-bind="text: title().toUpperCase()"></h2>
                 </div>
                 
                 {# ---- List content ---- #}

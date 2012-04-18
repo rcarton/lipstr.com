@@ -33,6 +33,10 @@ def login(request):
         if user is not None:
             next = next or '/'
             auth.login(request, user)
+            
+            # Clean the removed lists
+            user.get_profile().clean_lists()
+            
             return HttpResponse(content_type='application/json', content=simplejson.dumps({'next': next or '/'}))
         else:
             try:

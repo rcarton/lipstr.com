@@ -127,7 +127,7 @@ function TaskList(data) {
 	self.items = ko.observableArray([]);
 	self.newTaskText = ko.observable();
 	self.id = data.id;
-	self.title = data.title;
+	self.title = ko.observable(data.title);
 	
 	for (var t in data.items)
 		self.items.push(new Task(data.items[t].id, data.items[t].description));
@@ -143,6 +143,15 @@ function TaskList(data) {
     
     self.remTask = function(ptask) {
     	self.items.remove(function(task) { return task.id == ptask.id; });
+    }
+    
+    self.renameList = function() {
+    	value = prompt('Rename this list', self.title());
+    	
+    	// Error cases
+    	if (value == null || value == '') return;
+    	
+    	self.title(value);    	
     }
     
     self.toObj = function() {
@@ -369,8 +378,46 @@ function TaskListViewModel(id) {
 	self.init();
 }
 
-
 ko.applyBindings(new TaskListViewModel());
+
+
+TaskList.cleanMenu = function(jObj) { jObj.find('.mask').remove(); jObj.find('.li-menu-dropdown').hide(); }
+TaskList.toggleLiMenu = function(data, e) {
+	
+	var jTarget = $(e.currentTarget);
+	var jParent = jTarget.parents('.li-wrapper');
+	var menu = jTarget.find('ul');
+	
+	// Clean other menus
+	TaskList.cleanMenu($('.li-wrapper').not(jParent));
+	
+	if (menu.css('display') == 'block') {
+		TaskList.cleanMenu(jParent);
+		return;
+	}
+	
+	// Toggle the dropdown menu
+	menu.toggle();
+	e.stopPropagation();
+	
+	var jList = $('ul.list[data-id="' + data.id + '"]');
+	// Hide the list
+	var mask = document.createElement('div');
+	mask.setAttribute('class', 'mask');
+	mask.style.position = 'absolute';
+	mask.style.top = jList.position().top + 'px';
+	mask.style.left = jList.position().left + 'px';
+	mask.style.width = jList.width() + 'px';
+	mask.style.height = jList.height() + 'px';
+	mask.style.background = 'rgba(255,255,255, 0.85)';
+	mask.style.display = 'none';
+	
+	$(mask).css('z-index', '1');
+	jParent.append(mask);
+	$(mask).fadeIn(200);
+}
+//function(data, e) {   maskList($('ul[data-id=""]'))}
+
 
 
 $(document).ready(function() {
@@ -379,7 +426,24 @@ $(document).ready(function() {
 		window.document.location = '/';
 	});
 	
+	var menudd = $('#menu-dropdown');
 	
+	// menu
+	$('#username').click(function(e) {
+		if (!menudd.hasClass('active')) menudd.addClass('active');
+		else { menudd.removeClass('active'); }
+		e.stopPropagation();
+	});
+	
+	
+	$(document).click(function() {
+		menudd.removeClass('active');
+		
+		// remove li-menu-dropdown and mask
+		$('.li-menu-dropdown').hide();
+		$('.mask').remove();
+		
+	});
 });
 
 

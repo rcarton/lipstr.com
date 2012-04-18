@@ -27,7 +27,22 @@ class List(models.Model):
     @classmethod
     def get_lists_for_user(cls, user):
         userprofile = user.get_profile()
-        return List.objects.filter(id__in=userprofile.lists)
+        lists = List.objects.filter(id__in=userprofile.lists)
+        
+        ## Uncomment if I implement shared lists
+        # Remove non existing lists (removed ones)
+        #if len(lists) < len(userprofile.lists):
+        #    
+        #    found = set([l.id for l in lists])
+        #    listed = set(userprofile.lists)
+        #   
+        #   difference = (listed - found)
+        #   if len(difference): 
+        #       for l in difference:
+        #           userprofile.lists.remove(l)
+        #       userprofile.save()
+            
+        return lists
     
     def remove_item(self, item_id):
         for i in xrange(len(self.items)):
@@ -54,7 +69,7 @@ class Item(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     lists = ListField(models.ForeignKey(List))
-
+    
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)

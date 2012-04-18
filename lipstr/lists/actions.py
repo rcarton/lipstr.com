@@ -17,9 +17,9 @@ Action structure:
     }
 
 """
+from lists.models import Item, List
 
 
-from models import *
 
 
 def add_task(action, user):
@@ -105,8 +105,13 @@ def rem_list(action, user):
     try:
         l = List.objects.get(id=action['listId'])
         l.delete()
+        
+        # Add the list to the user's lists
+        userprofile = user.get_profile()
+        userprofile.lists.remove(action['listId'])
+        userprofile.save()
     except:
-        # Todo handle the real cases
+        # the list doesn't exist.
         pass
     
 
