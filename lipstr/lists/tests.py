@@ -8,6 +8,7 @@ Replace this with more appropriate tests for your application.
 from django.contrib.auth.models import User
 from django.test import TestCase
 from lists import actions
+from lists.actions import InsufficientPermissions
 from lists.forms import SignupForm
 from lists.models import *
 from lists.views import create_account
@@ -23,6 +24,9 @@ class ListTest(TestCase):
 class ActionTest(TestCase):
     
     usertest = None
+    
+    def setUp(self):
+        self.get_user().save()
     
     # ---- helpers ----
     def get_user(self):
@@ -50,7 +54,7 @@ class ActionTest(TestCase):
         list = actions.add_list(action, user)    # Returns the id
         return list
     
-    def add_task(self, list, description=None, id=None):
+    def add_task(self, list, description=None, id=None, user=None):
         """Adds a task to the given list."""
         from utils import get_random_string
         
@@ -67,8 +71,7 @@ class ActionTest(TestCase):
                            'position': position,
                            },
                   }
-        
-        actions.add_task(action, self.get_user())
+        actions.add_task(action, user or self.get_user())
         return id
     
     # ----
@@ -103,11 +106,11 @@ class ActionTest(TestCase):
         list = actions.add_list(action, user)
         
         self.create_list()
-
+        
         # Make sure the user has more than 1 list now
         ll = List.get_lists_for_user(user)
         self.assertTrue(len(ll) > 1)
-    
+        
     def test_rem_list(self):
         list = self.create_list()
         
@@ -121,7 +124,6 @@ class ActionTest(TestCase):
             List.objects.get(id=list.id)
         except List.DoesNotExist:
             pass
-        
         
     def test_add_task(self):      
         list = self.create_list()
@@ -142,10 +144,11 @@ class ActionTest(TestCase):
         actions.add_task(action, self.get_user())
         list = List.objects.get(id=list.id)
         self.assertEqual(len(list.items), 1)
-    
+        
     def test_rem_task(self):
+        user = self.get_user()
         list = self.create_list()
-        taskid = self.add_task(list, description='coucoulol')
+        taskid = self.add_task(list, description='coucoulol', user=user)
         list = List.objects.get(id=list.id)
         self.assertEqual(1, len(list.items))
         
@@ -157,10 +160,39 @@ class ActionTest(TestCase):
                    },
           }
         
-        actions.rem_task(action, self.get_user())
+        actions.rem_task(action, user)
         list = List.objects.get(id=list.id)
         self.assertEqual(0, len(list.items))
+    
+    def test_edit_list(self):      
+        list = self.create_list()
+        action = {
+                  'type': 'edit_list',
+                  'listId': list.id,
+                  'what': {
+                           'title': 'Pipopipopipo',
+                           },
+                  }
+        actions.edit_list(action, self.get_user())
+        list = List.objects.get(id=list.id)
+        self.assertEqual(list.title, 'Pipopipopipo')
         
+    
+    def test_verify_permission(self):
+        list = self.create_list()
+        
+        u = User()
+        u.username = 'UserWithNoRights'
+        u.set_password('test')
+        u.save()
+        
+        try:
+            actions.verify_permission(list, u)
+            self.fail('InsufficientPermissions not raised')
+        except InsufficientPermissions:
+            pass
+        
+            
     def test_process_actions_create_list(self):
         pass
 
@@ -169,11 +201,13 @@ class ViewsTest(TestCase):
     
     def test_create_user(self):
         email = 'test@test.com'
-        form = { 
+        post_dict = { 
                 'email': email,
                 'password': 'password',
                 'firstname': 'Robert',
                }
+        form = SignupForm(post_dict)
+        
         errors = create_account(form)
         
         self.assertEqual(0, len(errors))
@@ -181,11 +215,12 @@ class ViewsTest(TestCase):
     
     def test_create_user__users_exists(self):
         email = 'test@test.com'
-        form = { 
+        post_dict = { 
                 'email': email,
                 'password': 'password',
                 'firstname': 'Robert',
                }
+        form = SignupForm(post_dict)
         errors = create_account(form)
         errors = create_account(form)
         

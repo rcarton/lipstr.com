@@ -19,8 +19,13 @@ Action structure:
 """
 from lists.models import Item, List
 
+class ActionDoesNotExist(Exception): pass
 
-
+#Permissions
+class InsufficientPermissions(Exception): pass
+def verify_permission(list_, user, permission='w'):
+    if not list_.has_perm(user): 
+        raise InsufficientPermissions
 
 def add_task(action, user):
     """
@@ -39,6 +44,8 @@ def add_task(action, user):
     item.position = action['what']['position']
     
     l = List.objects.get(id=action['listId'])
+    verify_permission(l, user)
+    
     l.items.append(item)
     l.save()
     
@@ -56,6 +63,8 @@ def rem_task(action, user):
     """
     
     l = List.objects.get(id=action['listId'])
+    verify_permission(l, user)
+    
     l.remove_item(action['what']['id'])
     l.save()
     
@@ -81,6 +90,7 @@ def add_list(action, user):
     # Create the list
     l = List()
     l.title = action['what']['title']
+    l.color = action['what']['color']
     l.creator = user
     l.save()
     
@@ -104,6 +114,7 @@ def rem_list(action, user):
     
     try:
         l = List.objects.get(id=action['listId'])
+        verify_permission(l, user)
         l.delete()
         
         # Add the list to the user's lists
@@ -114,6 +125,31 @@ def rem_list(action, user):
         # the list doesn't exist.
         pass
     
+def edit_list(action, user):
+    """
+    Removes the list from the database.
+    
+    {
+        'type': 'rename_list',
+        'listId': <list id>
+        'what': {
+                    <attribute>: <value>
+                }
+    }
+    """
+    
+    editable_attributes = ('title', 'color')
+    
+    l = List.objects.get(id=action['listId'])
+    verify_permission(l, user)
+        
+    for key, value in action['what'].iteritems():
+        if key in editable_attributes:
+            l.__setattr__(key, value)
+    l.save()
+    
+    return l
+
 
 def process_actions(actions, user):
     """
@@ -127,6 +163,7 @@ def process_actions(actions, user):
                'rem_task': rem_task,
                'add_list': add_list,
                'rem_list': rem_list,
+               'edit_list': edit_list,
                }
     
     #TODO: handle errors
@@ -135,10 +172,16 @@ def process_actions(actions, user):
     
     while actions:
         
-        #TODO: verify that the user is allowed to modify that list
-        
         action = actions.pop(0)
-        returned_list = process.get(action['type'])(action, user)
+        
+        try:
+            fn = process.get(action['type'])
+            if not fn: raise ActionDoesNotExist  # the demanded action does not exist
+            
+            returned_list = fn(action, user)
+        except (InsufficientPermissions, ActionDoesNotExist):
+            # Cannot modify this list
+            continue
         
         # If there's a return value
         if returned_list: modified_lists.add(returned_list)

@@ -95,11 +95,17 @@ Action.getAddTaskAction = function(task, listId) { return new Action('add_task',
 // rem_task {type: 'rem_task', what: <task>}
 Action.getRemTaskAction = function(task, listId) { return new Action('rem_task', task.toObj(), listId); }
 
-// add_list {type: 'add_list', what: <tasklist>
+// add_list {type: 'add_list', what: <tasklist>}
 Action.getAddTaskListAction = function(tasklist) { return new Action('add_list', tasklist.toObj(), tasklist.id); }
 
-//rem_list {type: 'rem_list', what: <tasklist>
+//rem_list {type: 'rem_list', what: <tasklist>}
 Action.getRemListAction = function(list) { return new Action('rem_list', {}, list.id); }
+
+//rename_list {type: 'rem_list', what: {title: <new title>}}
+Action.getEditListAction = function(list, attribute, value) { 
+	var o = {}; o[attribute] = value;
+	return new Action('edit_list', o, list.id); 
+}
 
 function Task(id, description, position) {
 	var self = this;
@@ -128,6 +134,8 @@ function TaskList(data) {
 	self.newTaskText = ko.observable();
 	self.id = data.id;
 	self.title = ko.observable(data.title);
+	self.color = ko.observable((data.color == undefined)?'#ffffff':data.color);
+	
 	
 	for (var t in data.items)
 		self.items.push(new Task(data.items[t].id, data.items[t].description));
@@ -145,17 +153,8 @@ function TaskList(data) {
     	self.items.remove(function(task) { return task.id == ptask.id; });
     }
     
-    self.renameList = function() {
-    	value = prompt('Rename this list', self.title());
-    	
-    	// Error cases
-    	if (value == null || value == '') return;
-    	
-    	self.title(value);    	
-    }
-    
     self.toObj = function() {
-    	return { id: self.id, title: self.title, list: $.map(self.items(), function(item) { return item.toObj(); }) };
+    	return { id: self.id, title: self.title, color: self.color, list: $.map(self.items(), function(item) { return item.toObj(); }) };
     }
     self.toJSON = function() {
     	return ko.toJSON(self.toObj());
@@ -170,7 +169,7 @@ function TaskList(data) {
  * Creates a TaskList
  */
 TaskList.getTaskList = function(title) {
-	var data = {id: 'tmp_' + getRandomId(), title: title, items: new Array()};
+	var data = {id: 'tmp_' + getRandomId(), title: title, color: getRandomColor(), items: new Array()};
 	return new TaskList(data);
 }
 TaskList.focusLast = function() {
@@ -247,10 +246,35 @@ function TaskListViewModel(id) {
     	
     };
     
-    self.saveLocal = function() {
+    self.renameList = function(tasklist) {
+    	value = prompt('Rename this list', tasklist.title());
+    	
+    	// Error cases
+    	if (value == null || value == '') return;
+    	
+    	tasklist.title(value);
+    	self.actions.push(Action.getEditListAction(tasklist, 'title', value).toObj());
+    }
+    
+    self.changeListColor = function(tasklist, color) {
+    	tasklist.color(color);
+    	self.actions.push(Action.getEditListAction(tasklist, 'color', tasklist.color).toObj());
+    	self.synchronizeOrSave()
+    }
+    
+    self.synchronizeOrSave = function(callback) {
+    	if (isOnline()) {
+    		self.synchronizeLists(callback);
+    	} else {
+    		self.saveLocal(callback);
+    	}
+    }
+    
+    self.saveLocal = function(callback) {
     	console.log('Saving to appCache');
-    	if (!Modernizr.localstorage || !Modernizr.applicationcache ) { return false; }
+    	if (!Modernizr.localstorage || !Modernizr.applicationcache ) { if (callback) callback(); return false; }
     	localStorage[APPLICATION_NAME] = self.toJSON();
+    	if (callback) callback();
         return true;
     }
     

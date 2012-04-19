@@ -8,6 +8,7 @@ class List(models.Model):
     """This is a generic list."""
     
     title = models.CharField(max_length=128)
+    color = models.CharField(max_length=6)      # color: 'ffffff' for white
     when = models.DateField(auto_now_add=True)
     creator = models.ForeignKey(User)
     items = ListField(EmbeddedModelField('Item'))
@@ -16,6 +17,7 @@ class List(models.Model):
         return {
                'id': self.id,
                'title': self.title,
+               'color': self.color,
                'when': str(self.when),
                'creator': self.creator.id,
                'items': [item.to_obj() for item in self.items]
@@ -49,7 +51,19 @@ class List(models.Model):
             if self.items[i].id == item_id: 
                 return self.items.pop(i)
         return None
-
+    
+    def has_perm(self, user, permission='w'):
+        """
+        Returns true if the user has the permission.
+        
+        Permissions: a > w > r (author/all > write > read).
+        Write implies read. 
+        """
+        
+        #TODO: r&a permission
+        return (self.creator == user)
+    
+    
 class Item(models.Model):
     """This model should never be saved in a collection."""
     

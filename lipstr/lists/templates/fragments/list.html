@@ -6,11 +6,11 @@
             <div class="li-wrapper">
                 
                 {# ---- List header ---- #}
-                <div class="li-header" data-bind="attr: {style: 'background-color: hsl('+Math.floor(Math.random()*360)+', 60%, 80%);'}">
+                <div class="li-header" data-bind="attr: {style: 'background-color: '+ color() }">
                     <div class="li-menu" data-bind="click: TaskList.toggleLiMenu">
                         <div class="li-button"> </div>
                         <ul class="li-menu-dropdown">
-                            <li><a href="" data-bind="click: function() { $data.renameList(); }">rename list</a></li>
+                            <li><a href="" data-bind="click: function() { $root.renameList($data); }">rename list</a></li>
                             <li><a href="" data-bind="click: function() { $root.remList($data); }">remove list</a></li>
                         </ul>
                     </div>
