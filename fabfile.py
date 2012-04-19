@@ -7,7 +7,7 @@ FILENAME = '%s_%s.tar.gz' % (APPNAME, VERSION)
 
 APPROOT = '/home/lipstr/lipstr.com'
 DEVROOT = os.path.dirname(os.path.abspath(__file__))
-DJANGOROOT = os.path.join(DEVROOT, 'lipstr')
+DJANGOROOT = os.path.join(APPROOT, 'lipstr')
 
 # the user to use for the remote commands
 env.user = 'lipstr'
