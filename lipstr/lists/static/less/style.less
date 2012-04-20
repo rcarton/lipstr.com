@@ -364,13 +364,18 @@ header {
 /* ---- list ---- */
 #list-container {
     width: 100%;
-    max-width: 400px;
-    margin: 60px auto 0 auto;
+    /*max-width: 400px;*/
+    margin: 50px auto 0 auto;
+    height: 300px;
+    
+    > ul {
+        margin: 0 auto;
+    }
 }
 
 
 li.list {
-    width: 100%;
+	width: 360px;
     margin: 1em 0;
     padding-top: 4px;   /* prevent the shadows from being in the wrong column */
     
@@ -378,11 +383,6 @@ li.list {
         background-color: white;
         box-shadow: hsla(0, 15%, 12%, 0.4) 0px 1px 3px 0px; 
         
-    }
-    
-    &:first-child {
-        // We don't want the padding for the first column
-        margin-top: 0;
     }
     
     .li-header { 

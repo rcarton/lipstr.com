@@ -63,15 +63,27 @@ function isOnline() {
 	return res;
 }
 
+function initMasonry() {
+	$('#list-container > ul').masonry({
+		  itemSelector: 'li.list',
+		  columnWidth: 360,
+		  gutterWidth: 20,
+		  isFitWidth: true
+	});
+}
+
+function reloadMasonry() { 
+	$('#list-container > ul').masonry('reload'); 
+}
+
 /**
  * action types:
  * 	- add_task
  *  - rem_task
  *  - add_list
  *  - rem_list 
+ *  - edit_list
  * 
- * @param type
- * @param task
  */
 function Action(type, what, listId) {
 	var self = this;
@@ -101,7 +113,7 @@ Action.getAddTaskListAction = function(tasklist) { return new Action('add_list',
 //rem_list {type: 'rem_list', what: <tasklist>}
 Action.getRemListAction = function(list) { return new Action('rem_list', {}, list.id); }
 
-//rename_list {type: 'rem_list', what: {title: <new title>}}
+//rename_list {type: 'edit_list', what: {title: <new title>}}
 Action.getEditListAction = function(list, attribute, value) { 
 	var o = {}; o[attribute] = value;
 	return new Action('edit_list', o, list.id); 
@@ -185,8 +197,12 @@ function TaskListViewModel(id) {
 	self.actions = new Array();
 	self.menu = ko.observable();
 	
-	// Methods
+	initMasonry();
+	/*self.tasklists.subscribe(function() {
+	    reloadMasonry();
+	});*/
 	
+	// Methods
 	self.hasAppCache = function() { return (Modernizr.localstorage && Modernizr.applicationcache && localStorage[APPLICATION_NAME] != undefined); }
     
 	self.addTaskList = function(title) {
@@ -227,7 +243,7 @@ function TaskListViewModel(id) {
     	self.actions.push(Action.getAddTaskAction(task, tasklist.id).toObj());
     	
     	if (isOnline()) {
-    		self.synchronizeLists(tasklist.focus);
+    		self.synchronizeLists(function() { tasklist.focus; });
     	} else {
     		self.saveLocal();
     	}
@@ -287,7 +303,7 @@ function TaskListViewModel(id) {
     }   
     
     self.init = function() {
-		
+    	
     	// Get the unprocessed actions
     	if (self.hasAppCache()) {
     		self.actions = $.parseJSON(localStorage[APPLICATION_NAME])['actions'] || [];
@@ -299,7 +315,7 @@ function TaskListViewModel(id) {
     	if (isOnline()) {
     		// If online, synchronize
     		self.synchronizeLists();
-    		
+
     	} else {
     		// If offline, get the data from local storage
     		if (self.hasAppCache()) {
@@ -323,12 +339,6 @@ function TaskListViewModel(id) {
     	// Retrieve the latest list of tasklists from the server
 		$.get('/list', {}, function(data){ 
 			self.updateListsFromResponse(data, callback);
-			
-			// Focus
-			// TaskList.focusLast();
-			
-			if (callback) callback();
-			
 		});	
 	};
     
@@ -349,7 +359,6 @@ function TaskListViewModel(id) {
 
                 	// Clean up the actions
                 	self.actions = [];
-                	
     				self.updateListsFromResponse(data, callback);
                 },
                 error: function(data, status) {
@@ -395,9 +404,13 @@ function TaskListViewModel(id) {
 		// save it
 		self.saveLocal();
 		
+		// Reload masonry
+		reloadMasonry();
+		
 		// Call the callback
 		if (callback) callback();
     }
+    
     
 	self.init();
 }
@@ -468,6 +481,7 @@ $(document).ready(function() {
 		$('.mask').remove();
 		
 	});
+	
 });
 
 
