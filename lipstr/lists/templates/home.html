@@ -3,7 +3,7 @@
 {% block header %}
 <header>
     <div id="header-content">
-        <div id="logo-header"></div>
+        <a id="logo-header" href="/"> </a>
         <div id="menu">
             <div id="username">{% if user.first_name %}{{user.first_name|capfirst}}{% else %}{{user.username}}{% endif %}</div>
            

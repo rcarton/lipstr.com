@@ -35,7 +35,7 @@ def login(request):
             auth.login(request, user)
             
             # Clean the removed lists
-            user.get_profile().clean_lists()
+            #user.get_profile().clean_lists()
             
             return HttpResponse(content_type='application/json', content=simplejson.dumps({'next': next or '/'}))
         else:

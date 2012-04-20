@@ -31,10 +31,11 @@
         </li>
     </ul>
     
-    <form id="add-list" data-bind="submit: function() { addTaskList($('form').children('[name=list_name]').val()); }">
-            <input type="text" id="add-list-input" name="list_name" placeholder="Name of your list">
-            <input class="button" type="submit" value="Add list">
-    </form>
+    <div id="bottom-menu">
+        <input data-bind="click: function() { addTaskList(); }" class="button3d" type="submit" value="Add list">
+    </div>
+    
+
     
 </div>
 

@@ -173,6 +173,7 @@ function TaskList(data) {
     }
     
     self.focus = function() {
+    	console.log('Giving focus to '+ '[data-id=' + self.id + '] .add-task');
     	$('[data-id=' + self.id + '] .add-task').focus();
     }
     
@@ -187,6 +188,42 @@ TaskList.getTaskList = function(title) {
 TaskList.focusLast = function() {
 	$('.add-task').last().focus();
 }
+TaskList.cleanMenu = function(jObj) { jObj.find('.mask').remove(); jObj.find('.li-menu-dropdown').hide(); }
+TaskList.toggleLiMenu = function(data, e) {
+	
+	var jTarget = $(e.currentTarget);
+	var jParent = jTarget.parents('.li-wrapper');
+	var menu = jTarget.find('ul');
+	
+	// Clean other menus
+	TaskList.cleanMenu($('.li-wrapper').not(jParent));
+	
+	if (menu.css('display') == 'block') {
+		TaskList.cleanMenu(jParent);
+		return;
+	}
+	
+	// Toggle the dropdown menu
+	menu.toggle();
+	e.stopPropagation();
+	
+	var jList = $('ul.list[data-id="' + data.id + '"]');
+	// Hide the list
+	var mask = document.createElement('div');
+	mask.setAttribute('class', 'mask');
+	mask.style.position = 'absolute';
+	mask.style.top = jList.position().top + 'px';
+	mask.style.left = jList.position().left + 'px';
+	mask.style.width = jList.width() + 'px';
+	mask.style.height = jList.height() + 'px';
+	mask.style.background = 'rgba(255,255,255, 0.85)';
+	mask.style.display = 'none';
+	
+	$(mask).css('z-index', '1');
+	jParent.append(mask);
+	$(mask).fadeIn(200);
+}
+
 
 
 function TaskListViewModel(id) {
@@ -198,23 +235,23 @@ function TaskListViewModel(id) {
 	self.menu = ko.observable();
 	
 	initMasonry();
-	/*self.tasklists.subscribe(function() {
-	    reloadMasonry();
-	});*/
 	
 	// Methods
 	self.hasAppCache = function() { return (Modernizr.localstorage && Modernizr.applicationcache && localStorage[APPLICATION_NAME] != undefined); }
     
-	self.addTaskList = function(title) {
-		var tl = TaskList.getTaskList(title);
+	self.addTaskList = function() {
+		
+		value = prompt('Give a title to your list');
+    	
+    	// Error cases
+    	if (value == null || value == '') return;
+    	
+		var tl = TaskList.getTaskList(value);
 		self.tasklists.push(tl);
 		self.actions.push(Action.getAddTaskListAction(tl).toObj());
 		
 		// Clear the field
-		$('#add-list-input').val('');
-		
-		
-		
+
 		if (isOnline()) {
     		self.synchronizeLists(function() { tl.focus(); });
     	} else {
@@ -243,7 +280,7 @@ function TaskListViewModel(id) {
     	self.actions.push(Action.getAddTaskAction(task, tasklist.id).toObj());
     	
     	if (isOnline()) {
-    		self.synchronizeLists(function() { tasklist.focus; });
+    		self.synchronizeLists(function() { tasklist.focus(); });
     	} else {
     		self.saveLocal();
     	}
@@ -415,53 +452,16 @@ function TaskListViewModel(id) {
 	self.init();
 }
 
+// Disable the cache
+$.ajaxSetup({ cache:false });
+
+// knockoutjs magic
 ko.applyBindings(new TaskListViewModel());
 
-
-TaskList.cleanMenu = function(jObj) { jObj.find('.mask').remove(); jObj.find('.li-menu-dropdown').hide(); }
-TaskList.toggleLiMenu = function(data, e) {
-	
-	var jTarget = $(e.currentTarget);
-	var jParent = jTarget.parents('.li-wrapper');
-	var menu = jTarget.find('ul');
-	
-	// Clean other menus
-	TaskList.cleanMenu($('.li-wrapper').not(jParent));
-	
-	if (menu.css('display') == 'block') {
-		TaskList.cleanMenu(jParent);
-		return;
-	}
-	
-	// Toggle the dropdown menu
-	menu.toggle();
-	e.stopPropagation();
-	
-	var jList = $('ul.list[data-id="' + data.id + '"]');
-	// Hide the list
-	var mask = document.createElement('div');
-	mask.setAttribute('class', 'mask');
-	mask.style.position = 'absolute';
-	mask.style.top = jList.position().top + 'px';
-	mask.style.left = jList.position().left + 'px';
-	mask.style.width = jList.width() + 'px';
-	mask.style.height = jList.height() + 'px';
-	mask.style.background = 'rgba(255,255,255, 0.85)';
-	mask.style.display = 'none';
-	
-	$(mask).css('z-index', '1');
-	jParent.append(mask);
-	$(mask).fadeIn(200);
-}
-//function(data, e) {   maskList($('ul[data-id=""]'))}
 
 
 
 $(document).ready(function() {
-	
-	$('#logo-header').click(function() {
-		window.document.location = '/';
-	});
 	
 	var menudd = $('#menu-dropdown');
 	
