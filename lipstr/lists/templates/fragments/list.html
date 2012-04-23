@@ -19,7 +19,20 @@
                 
                 {# ---- List content ---- #}
                 <ul class="list" data-bind="foreach: items, attr: {'data-id': id}, visible: items().length > 0">
-                    <li data-bind="text: description, taskClick: {click: function() { $root.remTask($parent, $data)}, longClick: editItem, dbClick: editItem}, attr: {'data-id': id}"></li>
+                    
+                    <li data-bind="text: description, 
+                                   taskClick: {click: function() { $root.remTask($parent, $data)}, 
+                                               dragclick: function(e) { 
+                                                    var dnd = new TaskDND(e.currentTarget, $root, $data);
+                                                    dnd.drag(); 
+                                                },
+                                               dblclick: function(e) { console.log('dblclick'); },
+                                               longclick: function(e) { console.log('longclick'); }},
+                                   attr: {'data-id': id,
+                                          'draggable': true}">
+                    </li>
+                    
+                    
                 </ul>
                 
                 <form data-bind="submit: function() { $root.addTask($data); }">

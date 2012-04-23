@@ -14,8 +14,8 @@
 @blue: #60b9da;
 @blueborder: #5ba3bc;
 @highlight: rgba(255, 255, 255, 0.4);
-	
-.box-shadow(@values) {
+
+	.box-shadow(@values) {
     -moz-box-shadow: @values;
     -webkit-box-shadow: @values;
     box-shadow: @values;
@@ -469,6 +469,10 @@ li.list {
             color: @mediumgrey;
             padding: 4px 4px 4px 7px;
             overflow: hidden;
+            
+            &.dndover {
+                border-top: 3px solid @greyborder;
+            }
             
             &:hover {
                cursor: pointer;

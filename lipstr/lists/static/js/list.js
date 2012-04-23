@@ -173,7 +173,6 @@ function TaskList(data) {
     }
     
     self.focus = function() {
-    	console.log('Giving focus to '+ '[data-id=' + self.id + '] .add-task');
     	$('[data-id=' + self.id + '] .add-task').focus();
     }
     
@@ -455,9 +454,8 @@ function TaskListViewModel(id) {
 // Disable the cache
 $.ajaxSetup({ cache:false });
 
-// knockoutjs magic
+//knockoutjs magic
 ko.applyBindings(new TaskListViewModel());
-
 
 
 
