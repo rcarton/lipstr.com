@@ -150,6 +150,37 @@ def edit_list(action, user):
     
     return l
 
+def edit_item(action, user):
+    """
+    Edits an item.
+    {
+        'type': 'edit_item',
+        'listId': <list id>
+        'what': {
+                    id: <item id>,
+                    <attribute>: <value>
+                }
+    }
+    """
+    def get_item(items, id):
+        for item in items:
+            if item.id == id:
+                return item 
+        raise Item.DoesNotExist()
+                
+    l = List.objects.get(id=action['listId'])
+    verify_permission(l, user)
+    
+    editable_attributes = ('position', 'description')
+    item = get_item(l.items, action['what']['id'])
+    
+    for key, value in action['what'].iteritems():
+        if key == 'id': continue
+        elif key in editable_attributes:
+            item.__setattr__(key, value)
+    l.save()
+    
+    return l
 
 def process_actions(actions, user):
     """
@@ -164,6 +195,7 @@ def process_actions(actions, user):
                'add_list': add_list,
                'rem_list': rem_list,
                'edit_list': edit_list,
+               'edit_item': edit_item,
                }
     
     #TODO: handle errors
@@ -179,7 +211,7 @@ def process_actions(actions, user):
             if not fn: raise ActionDoesNotExist  # the demanded action does not exist
             
             returned_list = fn(action, user)
-        except (InsufficientPermissions, ActionDoesNotExist):
+        except (InsufficientPermissions, ActionDoesNotExist, Item.DoesNotExist):
             # Cannot modify this list
             continue
         

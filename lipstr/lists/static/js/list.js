@@ -107,13 +107,19 @@ Action.getAddTaskAction = function(task, listId) { return new Action('add_task',
 // rem_task {type: 'rem_task', what: <task>}
 Action.getRemTaskAction = function(task, listId) { return new Action('rem_task', task.toObj(), listId); }
 
+//edit_item {type: 'edit_item', what: {<attribute>: <new value>}}
+Action.getEditItemAction = function(item, listId, attribute, value) { 
+	var o = {}; o[attribute] = value; o['id']= item.id; 
+	return new Action('edit_item', o, listId); 
+}
+
 // add_list {type: 'add_list', what: <tasklist>}
 Action.getAddTaskListAction = function(tasklist) { return new Action('add_list', tasklist.toObj(), tasklist.id); }
 
 //rem_list {type: 'rem_list', what: <tasklist>}
 Action.getRemListAction = function(list) { return new Action('rem_list', {}, list.id); }
 
-//rename_list {type: 'edit_list', what: {title: <new title>}}
+//edit_list {type: 'edit_list', what: {title: <new title>}}
 Action.getEditListAction = function(list, attribute, value) { 
 	var o = {}; o[attribute] = value;
 	return new Action('edit_list', o, list.id); 
@@ -137,7 +143,13 @@ function Task(id, description, position) {
 		return ko.toJSON(self.toObj());		
 	}
 }
+Task.clone = function (task) {
+	return new Task(getRandomId(), task.description, task.position);
+}
 
+/**
+ * An Item is a Task, same thing, but I'm renaming Task to Item.
+ */
 function TaskList(data) {
 	
 	// Data
@@ -150,8 +162,19 @@ function TaskList(data) {
 	
 	
 	for (var t in data.items)
-		self.items.push(new Task(data.items[t].id, data.items[t].description));
+		self.items.push(new Task(data.items[t].id, data.items[t].description, data.items[t].position));
 	
+	// Utils
+	
+	// Returns undefined if not found
+	self.getItemFromId = function(itemId) {
+		for (var i in self.items()) {
+			if (self.items()[i]['id'] == itemId) {
+				return self.items()[i];
+			}
+		}
+		return undefined;
+	}
 	
 	// Operations 
     self.addTask = function() {
@@ -161,8 +184,35 @@ function TaskList(data) {
         return task;
     };
     
+    self.addCustomTask = function(task) {
+    	var i = 0;
+    	var found = false;
+    	//find the index of the first item with a bigger position score
+    	for(i in self.items()) {
+    		if (self.items()[i]['position'] > task['position']) {
+    			found = true;
+    			break;
+    		}
+    	}
+    	
+    	if (found) {
+    		//insert task at the right position
+    		self.items.splice(i, 0, task);    		
+    	} else {
+    		self.items.push(task);
+    	}
+    	
+    	return task;
+    }
+    
     self.remTask = function(ptask) {
     	self.items.remove(function(task) { return task.id == ptask.id; });
+    }
+    
+    self.sort = function() {
+    	self.items.sort(function(left, right) { 
+    		return left.position == right.position ? 0 : (left.position < right.position ? -1 : 1);
+		});
     }
     
     self.toObj = function() {
@@ -206,7 +256,7 @@ TaskList.toggleLiMenu = function(data, e) {
 	menu.toggle();
 	e.stopPropagation();
 	
-	var jList = $('ul.list[data-id="' + data.id + '"]');
+	var jList = $('ul.list-inner[data-id="' + data.id + '"]');
 	// Hide the list
 	var mask = document.createElement('div');
 	mask.setAttribute('class', 'mask');
@@ -274,8 +324,9 @@ function TaskListViewModel(id) {
     	}
 	}
 	
-	self.addTask = function(tasklist) {
-    	var task = tasklist.addTask();
+	self.addTask = function(tasklist, task) {
+    	if (!task) task = tasklist.addTask();
+    	
     	self.actions.push(Action.getAddTaskAction(task, tasklist.id).toObj());
     	
     	if (isOnline()) {
@@ -286,6 +337,7 @@ function TaskListViewModel(id) {
     	
     };
     
+    //TODO: remove != done
 	self.remTask = function(tasklist, task) {
     	tasklist.remTask(task);
     	self.actions.push(Action.getRemTaskAction(task, tasklist.id).toObj());
@@ -319,6 +371,7 @@ function TaskListViewModel(id) {
     		self.synchronizeLists(callback);
     	} else {
     		self.saveLocal(callback);
+    		reloadMasonry();
     	}
     }
     
@@ -328,6 +381,48 @@ function TaskListViewModel(id) {
     	localStorage[APPLICATION_NAME] = self.toJSON();
     	if (callback) callback();
         return true;
+    }
+    
+    // Returns the local TaskList from the id, undefined if not found
+    self.getLocalListFromId = function(listId) {
+    	
+    	for (var i in self.tasklists()) {
+    		if (self.tasklists()[i]['id'] == listId) {
+    			return self.tasklists()[i];
+    		}
+    	}
+    	return undefined;
+    }
+    
+    self.moveItem = function(item, originList, destList, position) {
+    	
+    	if (!position) position = getUnixTimestamp();
+    	
+    	if (originList != destList) {
+        	// Create item
+        	var newItem = Task.clone(item);
+        	newItem.position = position;
+        	
+        	// Insert item in the list
+        	destList.addCustomTask(newItem);
+        	self.actions.push(Action.getAddTaskAction(newItem, destList.id).toObj());
+        	
+        	// Remove origin item
+        	originList.remTask(item);
+        	self.actions.push(Action.getRemTaskAction(item, originList.id).toObj());
+    	} else {
+    		
+    		// Moving the item in the same list, edit position
+    		item.position = position;
+    		self.actions.push(Action.getEditItemAction(item, originList.id, 'position', position).toObj());
+    		
+    		// Sort the list in place
+    		originList.sort();
+    	}
+
+    	
+    	// Save
+    	self.synchronizeOrSave();
     }
     
     self.toJSON = function() {

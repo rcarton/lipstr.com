@@ -55,12 +55,13 @@ function getListsIdFromQuery() {
 
 /**
  * 
- * Returns a unix-like timestamp (seconds since epoch)
+ * Returns a unix-like timestamp (ms since epoch)
  * @returns
  */
 function getUnixTimestamp() {
-	return Math.round(new Date().getTime() / 1000);
+	return new Date().getTime();
 }
+
 
 function getRandomId() {
 	var chars = "0123456789abcdefghiklmnopqrstuvwxyz";

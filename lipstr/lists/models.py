@@ -20,7 +20,7 @@ class List(models.Model):
                'color': self.color,
                'when': str(self.when),
                'creator': self.creator.id,
-               'items': [item.to_obj() for item in self.items]
+               'items': sorted([item.to_obj() for item in self.items], key= lambda item: item['position'])
                }
     
     def to_json(self):

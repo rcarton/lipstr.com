@@ -18,13 +18,14 @@
                 </div>
                 
                 {# ---- List content ---- #}
-                <ul class="list" data-bind="foreach: items, attr: {'data-id': id}, visible: items().length > 0">
+                <ul class="list-inner" data-bind="foreach: items, attr: {'data-id': id}, visible: items().length > 0">
                     
                     <li data-bind="text: description, 
                                    taskClick: {click: function() { $root.remTask($parent, $data)}, 
                                                dragclick: function(e) { 
-                                                    var dnd = new TaskDND(e.currentTarget, $root, $data);
+                                                    var dnd = new TaskDND(e.currentTarget, $root, $parent, $data);
                                                     dnd.drag(); 
+                                                    
                                                 },
                                                dblclick: function(e) { console.log('dblclick'); },
                                                longclick: function(e) { console.log('longclick'); }},

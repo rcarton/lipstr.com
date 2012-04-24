@@ -47,7 +47,8 @@ class ActionTest(TestCase):
                   'listId': 'tmp_id',
                   'type': 'add_list',
                   'what': {
-                           'title': title
+                           'title': title,
+                           'color': 'cccccc'
                            }
                   }
         
@@ -85,7 +86,8 @@ class ActionTest(TestCase):
                   'listId': 'tmp_id',
                   'type': 'add_list',
                   'what': {
-                           'title': title
+                           'title': title,
+                           'color': '#123456'
                            }
                   }
         
@@ -99,7 +101,8 @@ class ActionTest(TestCase):
                   'listId': 'tmp_id',
                   'type': 'add_list',
                   'what': {
-                           'title': title
+                           'title': title,
+                           'color': '#123456'
                            }
                   }
         
@@ -176,6 +179,21 @@ class ActionTest(TestCase):
         actions.edit_list(action, self.get_user())
         list = List.objects.get(id=list.id)
         self.assertEqual(list.title, 'Pipopipopipo')
+        
+    def test_edit_item(self):      
+        list = self.create_list()
+        self.add_task(list, description='coucou', id='12345')
+        action = {
+                  'type': 'edit_item',
+                  'listId': list.id,
+                  'what': {
+                           'id': '12345', 
+                           'description': 'pipo',
+                           },
+                  }
+        actions.edit_item(action, self.get_user())
+        list = List.objects.get(id=list.id)
+        self.assertEqual(list.items[0].description, 'pipo')
         
     
     def test_verify_permission(self):
