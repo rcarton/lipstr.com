@@ -1,13 +1,12 @@
 # Django settings for lipstr project.
 import os
-from private_settings import DATABASES, SECRET_KEY
+from private_settings import DEBUG, DATABASES, SECRET_KEY, SENTRY_DSN
 
 DJANGO_ROOT = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), '..')
 
 LOGIN_URL = '/login'
 
-DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -15,8 +14,6 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-
-
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -103,7 +100,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -115,7 +112,12 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
-)
+]
+
+# Sentry
+if not DEBUG: 
+    INSTALLED_APPS.append('raven.contrib.django')
+INSTALLED_APPS = tuple(INSTALLED_APPS)
 
 AUTH_PROFILE_MODULE = 'lists.UserProfile'
 

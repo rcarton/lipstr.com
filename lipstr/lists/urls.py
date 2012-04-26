@@ -7,5 +7,6 @@ urlpatterns = patterns('lists.views',
     url(r'^logout$', 'disconnect', name='disconnect'),
     url(r'^list$', 'list', name='list'),
     url(r'^actions$', 'actions', name='actions'),
+    url(r'^404$', 'error404', name='error404'),
 )
 

@@ -138,4 +138,8 @@ def create_account(signup_form):
     user.save()
     
     return {}
-    
+
+def error404(request):
+    raise Exception()
+    return render_to_response('404.html', RequestContext(request, {}))
+
