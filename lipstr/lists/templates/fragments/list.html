@@ -10,7 +10,7 @@
                     <div class="li-menu" data-bind="click: TaskList.toggleLiMenu">
                         <div class="li-button"> </div>
                         <ul class="li-menu-dropdown">
-                            <li><a href="" data-bind="click: function() { $root.renameList($data); }">rename list</a></li>
+                            <li><a href="" data-bind="click: function() { $data.editList(); }">edit list</a></li>
                             <li><a href="" data-bind="click: function() { $root.remList($data); }">remove list</a></li>
                         </ul>
                     </div>
@@ -29,8 +29,7 @@
                                                 },
                                                dblclick: function(e) { console.log('dblclick'); },
                                                longclick: function(e) { console.log('longclick'); }},
-                                   attr: {'data-id': id,
-                                          'draggable': true}">
+                                   attr: {'data-id': id}">
                     </li>
                     
                     
@@ -48,8 +47,18 @@
     <div id="bottom-menu">
         <input data-bind="click: function() { addTaskList(); }" class="button3d" type="submit" value="Add list">
     </div>
-    
-
-    
 </div>
 
+<div id="list-edit" style="display: none;">
+    <h3>Edit List</h3>
+    <div id="list-edit-content">
+        <input type="text" name="title" data-property="title">
+        <input type="color" name="color" data-property="color">
+    </div>
+    <div id="list-edit-menu">
+        <input class="button3d-thin" type="submit" value="save">
+        <input class="button3d-thin" type="submit" value="cancel">
+        <div style="clear: both"></div>
+    </div>
+    
+</div>

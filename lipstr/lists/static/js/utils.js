@@ -1,4 +1,13 @@
 
+// http://stackoverflow.com/questions/210717/using-jquery-to-center-a-div-on-the-screen
+jQuery.fn.center = function () {
+    this.css("position","absolute");
+    this.css("top", (($(window).height() - this.outerHeight()) / 2) + 
+                                                $(window).scrollTop() + "px");
+    this.css("left", (($(window).width() - this.outerWidth()) / 2) + 
+                                                $(window).scrollLeft() + "px");
+    return this;
+}
 
 jQuery.reduce = function(arr, valueInitial, fnReduce)
 {
@@ -200,5 +209,30 @@ function handleErrorForm(jForm, errors, direction) {
 		$(errorDiv).effect('bounce', { times: 2, distance: 5, direction: direction }, 300);
 	}
 }
+
+
+function showMask() {
+	
+	// Create the mask div
+	var mask = document.createElement('div');
+	mask.setAttribute('id', 'modalMask');
+	$(mask).css("position", "fixed");
+	$(mask).css('width', '100%');
+    $(mask).css('height', '100%');
+    $(mask).css('background-color', 'black');
+    $(mask).css('opacity', 0.6);
+    $(mask).css('z-index', 300);
+    $(mask).css('top', '0px');
+    $(mask).css('left', '0px');
+    
+    $(document.body).append(mask);
+    
+    return mask;
+}
+
+function hideMask() {
+	$('#modalMask').remove();
+}
+
 
 

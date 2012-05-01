@@ -15,6 +15,7 @@
     <link rel="stylesheet/less" href="static/fonts/roboto/stylesheet.css">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Open+Sans' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Arvo:400,700' rel='stylesheet' type='text/css'>
+    {% block custom-css-files %}{% endblock %}
     
     <!-- Less stylesheets  -->
     
@@ -23,7 +24,6 @@
 	<script src="{{STATIC_URL}}js/libs/less-1.2.2.min.js"></script>
 	
     {% block custom-css %}{% endblock %}
-    {% block custom-css-files %}{% endblock %}
     
 	{% comment %}<!-- Use SimpLESS (Win/Linux/Mac) or LESS.app (Mac) to compile your .less files
 	to style.css, and replace the 2 lines above by this one:
@@ -32,7 +32,7 @@
     <script language="Javascript" type="text/javascript">var STATIC_URL = "{{STATIC_URL}}";</script>
     <script src="{{STATIC_URL}}js/libs/knockout-2.0.0.min.js"></script>
 	<script src="{{STATIC_URL}}js/libs/modernizr-2.5.3-respond-1.1.0.min.js"></script>
-	
+    
     <link rel="shortcut icon" href="{{STATIC_URL}}img/favicon.ico" />
     
     {% include 'fragments/googleanalytics.html' %}
@@ -61,9 +61,6 @@
 <script src="{{STATIC_URL}}js/libs/jquery.robertclick.js"></script>
 
 <script src="{{STATIC_URL}}js/utils.js"></script>
-<script src="{{STATIC_URL}}js/ko.bindings.js"></script>
-<script src="{{STATIC_URL}}js/listdnd.js"></script>
-<script src="{{STATIC_URL}}js/list.js"></script>
 
 <script>
 if (navigator.userAgent.toLowerCase().indexOf("chrome") >= 0) {

@@ -7,7 +7,6 @@
    ========================================================================== */
 
 /* ---- colors ---- */
-@zigzag-color: #eaeaea;
 @grey1: #2e2e2e;
 @greyborder: #e8e8e8;
 @mediumgrey: #4a4a4a;
@@ -104,6 +103,11 @@ input:-moz-placeholder {
         margin-bottom: -2px;
         height: 54px;
     }
+}
+
+.button3d-thin {
+	.button3d;
+	.box-shadow(~"inset rgba(255, 255, 255, 0.5) 0px 1px 0px, inset #888 0px -1px 0px");
 }
 
 
@@ -374,6 +378,93 @@ header {
 
 
 /* ---- list ---- */
+.button3d-thin {
+            height: 24px;
+            float: right;
+            margin-left: 3px;
+            margin-right: 3px;
+            
+            &:active { height: 23px; margin-bottom: -1px; padding-top: 1px;}
+}
+        
+#list-edit {
+    .default-box-shadow;
+    background-color: white;
+    width: 240px;
+    z-index: 301;
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    margin-left: -120px;
+    
+    h3 {
+	    font-size: 19px;
+	    text-align: center;
+	    font-weight: 300;
+	    color: @grey1;
+	    width: 100%;
+	    font-family: 'Open Sans Condensed', sans serif;
+	    border-bottom: 1px solid @greyborder;
+	    margin: 0 0 9px 0;
+    }
+    
+    #list-edit-content {
+        margin-top: 9px;
+        padding: 0 8px 8px 8px;
+        
+        input[name="title"] { 
+            width: 75%; 
+        }
+        input[type="text"] { 
+            /*background-color: transparent;*/
+            border: 0;
+            .box-shadow(~"inset rgba(35, 26, 26, 0.16) 1px 1px 3px 1px"); 
+            padding-left: 2px;
+        }
+        
+        div.sp-replacer {
+            .button3d-thin;
+            height: 16px;
+			padding: 2px 0 0 4px;
+			display: inline-block;
+			width: 36px;
+			padding: 2px 0 0 4px;
+            float: right;
+			margin-right: 0px;
+
+            &:active {
+                height: 15px;
+                margin-top: 1px;
+                margin-bottom: -1px;
+            }
+            
+            .sp-preview {
+				width: 18px;
+				height: 11px;
+				padding-top: 0px;
+				margin-right: 2px;
+				border: 1px solid #999999;
+            }
+            
+            .sp-dd {
+                height: 11px; line-height: 11px; padding: 1px 0;
+            }
+               
+        }
+        
+    }
+    
+    #list-edit-menu {
+	    text-align: right;
+	    padding: 5px;
+	    margin: 1em 0 0 0;
+	    
+    }
+    
+}
+button.sp-choose { .button3d-thin; }
+
+
 #list-container {
     width: 100%;
     /*max-width: 400px;*/
@@ -510,8 +601,9 @@ li.list {
 	box-shadow: inset rgba(0, 0, 0, 0.2) 0px 2px 2px 0px;	
 	
 	.button3d {
-        height: 2.5em;
-        display: inline-block;	
+        height: 30px;
+        display: inline-block;
+        &:active { height: 28px; margin-bottom: -3px; padding-top: 1px;}
     }
 }
 

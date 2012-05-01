@@ -120,8 +120,12 @@ Action.getAddTaskListAction = function(tasklist) { return new Action('add_list',
 Action.getRemListAction = function(list) { return new Action('rem_list', {}, list.id); }
 
 //edit_list {type: 'edit_list', what: {title: <new title>}}
-Action.getEditListAction = function(list, attribute, value) { 
-	var o = {}; o[attribute] = value;
+Action.getEditListAction = function(list, attributes) { 
+	var o = {};
+	for (k in attributes) {
+		o[k] = attributes[k];
+	}
+		
 	return new Action('edit_list', o, list.id); 
 }
 
@@ -213,6 +217,62 @@ function TaskList(data) {
     	self.items.sort(function(left, right) { 
     		return left.position == right.position ? 0 : (left.position < right.position ? -1 : 1);
 		});
+    }
+    
+    self.editList = function() {
+    	var editListDiv = $('#list-edit');
+    	// Display modal mask
+    	var mask = showMask();
+    	
+    	var discard = function() { $(mask).off('click.editList'); hideMask(); editListDiv.hide(); }
+    	
+    	// Triggered when save is clicked
+    	var saveFn = function() { 
+    		var changed = {};
+    		var somethingHasChanged = false;
+    		editListDiv.find('input[data-property]').each(function() {
+    			var oldValue = self[$(this).attr("data-property")].call();
+    			var newValue = $(this).val()
+    			if (oldValue != newValue) {
+    				changed[$(this).attr("data-property")] = newValue;
+    				
+    				// Change the value in the current object
+    				self[$(this).attr("data-property")] = newValue;
+    				
+    				somethingHasChanged = true;
+    			}
+    		});
+    		
+    		if (somethingHasChanged) {
+    			TaskListViewModel.instance.actions.push(Action.getEditListAction(self, changed).toObj());
+    			TaskListViewModel.instance.synchronizeOrSave();
+    		}
+    		discard(); 
+    	}
+    	
+    	var cancelFn = function() { discard(); }
+    	
+    	// When the mask is clicked discard the edit list window
+    	$(mask).on('click.editList', discard);
+    	
+    	editListDiv.find('[data-property="title"]').val(self.title());
+    	
+    	// Color picker
+    	editListDiv.find('[data-property="color"]').spectrum({
+    		color: self.color(),
+    		chooseText: 'ok'
+    	}).val(self.color());
+    	
+    	editListDiv.find('input[value="save"]').off('click.editList').on('click.editList', saveFn);
+    	editListDiv.find('input[value="cancel"]').off('click.editList').on('click.editList', cancelFn);
+    	
+    	editListDiv.attr('data-listId', self.id);
+    	
+    	editListDiv.show();
+    	
+    	
+    	
+    	
     }
     
     self.toObj = function() {
@@ -349,22 +409,6 @@ function TaskListViewModel(id) {
     	}
     	
     };
-    
-    self.renameList = function(tasklist) {
-    	value = prompt('Rename this list', tasklist.title());
-    	
-    	// Error cases
-    	if (value == null || value == '') return;
-    	
-    	tasklist.title(value);
-    	self.actions.push(Action.getEditListAction(tasklist, 'title', value).toObj());
-    }
-    
-    self.changeListColor = function(tasklist, color) {
-    	tasklist.color(color);
-    	self.actions.push(Action.getEditListAction(tasklist, 'color', tasklist.color).toObj());
-    	self.synchronizeOrSave()
-    }
     
     self.synchronizeOrSave = function(callback) {
     	if (isOnline()) {
@@ -542,7 +586,6 @@ function TaskListViewModel(id) {
 		if (callback) callback();
     }
     
-    
 	self.init();
 }
 
@@ -550,8 +593,8 @@ function TaskListViewModel(id) {
 $.ajaxSetup({ cache:false });
 
 //knockoutjs magic
-ko.applyBindings(new TaskListViewModel());
-
+TaskListViewModel.instance = new TaskListViewModel();
+ko.applyBindings(TaskListViewModel.instance);
 
 
 $(document).ready(function() {
@@ -564,7 +607,6 @@ $(document).ready(function() {
 		else { menudd.removeClass('active'); }
 		e.stopPropagation();
 	});
-	
 	
 	$(document).click(function() {
 		menudd.removeClass('active');
