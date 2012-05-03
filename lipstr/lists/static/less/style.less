@@ -386,8 +386,8 @@ header {
             
             &:active { height: 23px; margin-bottom: -1px; padding-top: 1px;}
 }
-        
-#list-edit {
+
+.popup {
     .default-box-shadow;
     background-color: white;
     width: 240px;
@@ -398,20 +398,33 @@ header {
     margin-left: -120px;
     
     h3 {
-	    font-size: 19px;
-	    text-align: center;
-	    font-weight: 300;
-	    color: @grey1;
-	    width: 100%;
-	    font-family: 'Open Sans Condensed', sans serif;
-	    border-bottom: 1px solid @greyborder;
-	    margin: 0 0 9px 0;
+        font-size: 19px;
+        text-align: center;
+        font-weight: 300;
+        color: @grey1;
+        width: 100%;
+        font-family: 'Open Sans Condensed', sans serif;
+        border-bottom: 1px solid @greyborder;
+        margin: 0 0 9px 0;
     }
     
-    #list-edit-content {
+    .popup-content {
         margin-top: 9px;
         padding: 0 8px 8px 8px;
-        
+    }
+    
+    .popup-menu {
+        text-align: right;
+        padding: 5px;
+        margin: 1em 0 0 0;
+    }
+}
+
+#list-edit {
+
+
+    #list-edit-content {
+
         input[name="title"] { 
             width: 75%; 
         }
@@ -454,12 +467,7 @@ header {
         
     }
     
-    #list-edit-menu {
-	    text-align: right;
-	    padding: 5px;
-	    margin: 1em 0 0 0;
-	    
-    }
+    #list-edit-menu {}
     
 }
 button.sp-choose { .button3d-thin; }
@@ -576,6 +584,10 @@ li.list {
             &:hover {
                cursor: pointer;
                .transition;
+            }
+            
+            input {
+                width: 90%;
             }
         }
     }

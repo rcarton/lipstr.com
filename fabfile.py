@@ -32,13 +32,13 @@ def pack():
     # create a new source distribution as tarball
     with cd(DEVROOT):
         local('mkdir -p dist')
-        local('tar -czf dist/%s $(git ls-files)' % FILENAME, capture=False)
+        local('tar -czf %s/dist/%s $(git ls-files)' % (DEVROOT, FILENAME), capture=False)
 
 def deploy():
     
     # upload the source tarball to the temporary folder on the server
     with cd(DEVROOT):
-        put('dist/%s' % FILENAME, '/tmp/%s' % FILENAME)
+        put('%s/dist/%s' % (DEVROOT, FILENAME), '/tmp/%s' % FILENAME)
         
     # create a place where we can unzip the tarball, then enter
     # that directory and unzip it

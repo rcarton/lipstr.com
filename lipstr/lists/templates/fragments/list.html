@@ -21,14 +21,14 @@
                 <ul class="list-inner" data-bind="foreach: items, attr: {'data-id': id}, visible: items().length > 0">
                     
                     <li data-bind="text: description, 
-                                   taskClick: {click: function() { $root.remTask($parent, $data)}, 
+                                   taskClick: {click: function() { $root.remTask($parent, $data); }, 
                                                dragclick: function(e) { 
                                                     var dnd = new TaskDND(e.currentTarget, $root, $parent, $data);
                                                     dnd.drag(); 
                                                     
                                                 },
                                                dblclick: function(e) { console.log('dblclick'); },
-                                               longclick: function(e) { console.log('longclick'); }},
+                                               longclick: function(e) { $data.editItem($parent); }},
                                    attr: {'data-id': id}">
                     </li>
                     
@@ -49,16 +49,28 @@
     </div>
 </div>
 
-<div id="list-edit" style="display: none;">
+<div id="list-edit" class="popup" style="display: none;">
     <h3>Edit List</h3>
-    <div id="list-edit-content">
+    <div id="list-edit-content" class="popup-content">
         <input type="text" name="title" data-property="title">
         <input type="color" name="color" data-property="color">
     </div>
-    <div id="list-edit-menu">
+    <div id="list-edit-menu" class="popup-menu">
         <input class="button3d-thin" type="submit" value="save">
         <input class="button3d-thin" type="submit" value="cancel">
         <div style="clear: both"></div>
-    </div>
-    
+    </div> 
 </div>
+
+<div id="item-edit" class="popup" style="display: none;">
+    <h3>Edit Item</h3>
+    <div id="item-edit-content" class="popup-content">
+        <input type="text" name="description" data-property="description">
+    </div>
+    <div id="item-edit-menu" class="popup-menu">
+        <input class="button3d-thin" type="submit" value="save">
+        <input class="button3d-thin" type="submit" value="cancel">
+        <div style="clear: both"></div>
+    </div> 
+</div>
+

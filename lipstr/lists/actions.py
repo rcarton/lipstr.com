@@ -168,11 +168,15 @@ def edit_item(action, user):
                 return item 
         raise Item.DoesNotExist()
                 
-    l = List.objects.get(id=action['listId'])
+    l = List.objects.get(id=action.get('listId', None))
     verify_permission(l, user)
     
     editable_attributes = ('position', 'description')
-    item = get_item(l.items, action['what']['id'])
+    
+    try:
+        item = get_item(l.items, action['what']['id'])
+    except:
+        raise Item.DoesNotExist
     
     for key, value in action['what'].iteritems():
         if key == 'id': continue
@@ -211,8 +215,9 @@ def process_actions(actions, user):
             if not fn: raise ActionDoesNotExist  # the demanded action does not exist
             
             returned_list = fn(action, user)
-        except (InsufficientPermissions, ActionDoesNotExist, Item.DoesNotExist):
+        except (InsufficientPermissions, ActionDoesNotExist, List.DoesNotExist, Item.DoesNotExist):
             # Cannot modify this list
+            # Add errors in the response
             continue
         
         # If there's a return value

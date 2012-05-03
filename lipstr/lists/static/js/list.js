@@ -108,8 +108,12 @@ Action.getAddTaskAction = function(task, listId) { return new Action('add_task',
 Action.getRemTaskAction = function(task, listId) { return new Action('rem_task', task.toObj(), listId); }
 
 //edit_item {type: 'edit_item', what: {<attribute>: <new value>}}
-Action.getEditItemAction = function(item, listId, attribute, value) { 
-	var o = {}; o[attribute] = value; o['id']= item.id; 
+Action.getEditItemAction = function(item, listId, attributes) { 
+	var o = {};
+	o['id'] = item.id;
+	for (k in attributes) {
+		o[k] = attributes[k];
+	}
 	return new Action('edit_item', o, listId); 
 }
 
@@ -119,7 +123,7 @@ Action.getAddTaskListAction = function(tasklist) { return new Action('add_list',
 //rem_list {type: 'rem_list', what: <tasklist>}
 Action.getRemListAction = function(list) { return new Action('rem_list', {}, list.id); }
 
-//edit_list {type: 'edit_list', what: {title: <new title>}}
+//edit_list {type: 'edit_list', what: {<attribute>: <new value>}}
 Action.getEditListAction = function(list, attributes) { 
 	var o = {};
 	for (k in attributes) {
@@ -132,23 +136,58 @@ Action.getEditListAction = function(list, attributes) {
 function Task(id, description, position) {
 	var self = this;
 	self.id = id;
-	self.description = description;
+	self.description = ko.observable(description);
 	self.position = position;
 	
-	self.editItem = function () {
-		// Not implemented!		
-		console.log("editItem(): Not implemented, I'm such a slacker.");
-	} 
+    self.editItem = function(tasklist) {
+    	var editItemDiv = $('#item-edit');
+    	// Display modal mask
+    	var mask = showMask();
+    	
+    	var discard = function() { $(mask).off('click.editItem'); hideMask(); editItemDiv.hide(); }
+    	
+    	// Triggered when save is clicked
+    	var saveFn = function() { 
+    		if (self.description != editItemDiv.find('[data-property="description"]').val()) {
+    			self.description = editItemDiv.find('[data-property="description"]').val();
+    		}
+    		
+    		TaskListViewModel.instance.actions.push(Action.getEditItemAction(self, tasklist.id, { description: self.description }).toObj());
+			TaskListViewModel.instance.synchronizeOrSave();
+			
+    		discard(); 
+    	}
+    	
+    	var cancelFn = function() { discard(); }
+    	
+    	// When the mask is clicked discard the edit list window
+    	$(mask).on('click.editItem', discard);
+    	
+    	editItemDiv.find('[data-property="description"]').val(self.description());
+    	
+    	editItemDiv.on('keyup.editItem', function(event){
+    	    if(event.keyCode == 13){
+    	    	editItemDiv.find('input[value="save"]').trigger('click');
+    	    }
+    	});
+    	
+    	editItemDiv.find('input[value="save"]').off('click.editItem').on('click.editItem', saveFn);
+    	editItemDiv.find('input[value="cancel"]').off('click.editItem').on('click.editItem', cancelFn);
+    	
+    	editItemDiv.attr('data-itemId', self.id);
+    	editItemDiv.show();	
+    	editItemDiv.find('[data-property="description"]').focus();
+    }
 	
 	self.toObj = function() {
-		return {id: self.id, description: self.description, position: self.position};
+		return {id: self.id, description: self.description(), position: self.position};
 	}
 	self.toJSON = function() {
 		return ko.toJSON(self.toObj());		
 	}
 }
 Task.clone = function (task) {
-	return new Task(getRandomId(), task.description, task.position);
+	return new Task(getRandomId(), task.description(), task.position);
 }
 
 /**
@@ -263,16 +302,17 @@ function TaskList(data) {
     		chooseText: 'ok'
     	}).val(self.color());
     	
+    	editListDiv.off('keyup.editList').on('keyup.editList', function(event){
+    	    if(event.keyCode == 13){
+    	    	editListDiv.find('input[value="save"]').trigger('click');
+    	    }
+    	});
+    	
     	editListDiv.find('input[value="save"]').off('click.editList').on('click.editList', saveFn);
     	editListDiv.find('input[value="cancel"]').off('click.editList').on('click.editList', cancelFn);
     	
     	editListDiv.attr('data-listId', self.id);
-    	
-    	editListDiv.show();
-    	
-    	
-    	
-    	
+    	editListDiv.show();	
     }
     
     self.toObj = function() {
@@ -458,7 +498,7 @@ function TaskListViewModel(id) {
     		
     		// Moving the item in the same list, edit position
     		item.position = position;
-    		self.actions.push(Action.getEditItemAction(item, originList.id, 'position', position).toObj());
+    		self.actions.push(Action.getEditItemAction(item, originList.id, {position: position}).toObj());
     		
     		// Sort the list in place
     		originList.sort();
