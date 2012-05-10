@@ -296,6 +296,7 @@ function TaskList(data) {
     	
     	editListDiv.find('[data-property="title"]').val(self.title());
     	
+    	// TODO: fix spectrum(?) bug: when the color is #000000 everything breaks.
     	// Color picker
     	editListDiv.find('[data-property="color"]').spectrum({
     		color: self.color(),

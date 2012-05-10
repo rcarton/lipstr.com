@@ -120,6 +120,14 @@ def signup(request):
     return render_to_response('signup.html', RequestContext(request, {}))
     
 def create_account(signup_form):
+    """ Create Account
+    
+    signup_form:
+     - email
+     - password
+     - firstname
+    
+    """
     
     # User exists
     try:
@@ -142,4 +150,9 @@ def create_account(signup_form):
 def error404(request):
     raise Exception()
     return render_to_response('404.html', RequestContext(request, {}))
+
+def error500(request, message=None):
+    return render_to_response('500.html', RequestContext(request, {'message': message}))
+def error400(request, message=None):
+    return render_to_response('400.html', RequestContext(request, {'message': message}))
 

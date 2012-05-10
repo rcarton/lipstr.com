@@ -68,11 +68,13 @@ input:-moz-placeholder {
     background: linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,@opacity) 100%); /* W3C */
 }
 
+
+@button-color: #fafafa;
+@button-border-color: darken(@button-color, 32%);
 .button {
-	@button-color: #fafafa;
 	
     border-radius: 3px;
-    border: 1px solid darken(@button-color, 32%);
+    border: 1px solid @button-border-color;
     .button-gradient(0.1);
     .box-shadow(inset rgba(255, 255, 255, 0.5) 0px 1px 0px);
     .text-shadow(white 0px 1px 0px);
@@ -82,7 +84,7 @@ input:-moz-placeholder {
     height: 56px;
     background-color: @button-color;
     color: darken(@button-color, 50%);
-    .text-shadow(rgba(255, 255, 255, 0.35) 0px 1px 0px);
+    /*.text-shadow(rgba(255, 255, 255, 0.35) 0px 1px 0px);*/
     .transition;
     
     &:hover {
@@ -251,11 +253,9 @@ header {
          
          &:before {
              display: block;
-             height: 0;
-             
+             height: 0;   
              content: '';
              position: absolute;
-             
          }
          
          &.down:before { 
@@ -330,11 +330,38 @@ header {
     }
     
     #or-login-with {
-        display: none;
         float: left;
         position: relative;
         left: 255px;
-        top: 35px;
+        top: 14px;
+        padding-right: 95px;
+        
+        #gmail-button {
+            .button3d-thin;
+            float: none;
+            display: block;
+            margin-bottom: 2px;
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            font-weight: normal;
+            font-size: 13px;
+            
+            &:before {
+				display: inline-block;
+				height: 16px;
+				width: 22px;
+				content: '';
+				position: relative;
+				left: -4px;
+                top: 3px;
+                background-image: url('../img/gmail-small.png');
+                background-repeat: no-repeat;
+                padding-right: 5px;
+                border-right: 1px solid @button-border-color;
+            }
+            
+        }
     }
     
     #you-dont-have-an-account {

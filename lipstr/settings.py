@@ -1,6 +1,6 @@
 # Django settings for lipstr project.
 import os
-from private_settings import DEBUG, DATABASES, SECRET_KEY, SENTRY_DSN
+from private_settings import DEBUG, DATABASES, SECRET_KEY, SENTRY_DSN, GOOGLE_API_CLIENT_ID, GOOGLE_API_CLIENT_SECRET, GOOGLE_API_CALLBACK_URI
 
 DJANGO_ROOT = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), '..')
@@ -108,6 +108,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'lists',
+    'lipstr.google_api',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:

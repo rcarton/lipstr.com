@@ -2,13 +2,13 @@
 {% extends "layouts/error.html" %}
 
 
-{% block error-code %}400{% endblock %}
+{% block error-code %}500{% endblock %}
 {% block error-message %}
 
 {% if message %}
     {{ message }}
 {% else %}
-    We couldn't process your request, make sure it is correct.
+    There was an error processing your request, an email has been sent to report the problem.
 {% endif %}
 
 {% endblock %}
