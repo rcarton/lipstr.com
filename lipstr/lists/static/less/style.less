@@ -183,6 +183,11 @@ header {
 	                .transitionvalues(background-color 0.2s);
 	                cursor: pointer;
                 }
+                
+                img {
+                    vertical-align: text-bottom;
+                    padding-right: 3px;
+                }
             }
             
             #menu-dropdown {
@@ -422,7 +427,7 @@ header {
     position: fixed;
     top: 15%;
     left: 50%;
-    margin-left: -120px;
+    margin-left: -120px; 
     
     h3 {
         font-size: 19px;
@@ -438,6 +443,13 @@ header {
     .popup-content {
         margin-top: 9px;
         padding: 0 8px 8px 8px;
+        
+        input[type="text"] { 
+            /*background-color: transparent;*/
+            border: 0;
+            .box-shadow(~"inset rgba(35, 26, 26, 0.16) 1px 1px 3px 1px"); 
+            padding-left: 2px;
+        }
     }
     
     .popup-menu {
@@ -447,6 +459,16 @@ header {
     }
 }
 
+#item-edit {
+	@width: 340px;
+	width: @width;
+	margin-left: -@width/2;
+	
+	input[type="text"] { 
+	   width: 99%;
+	}
+	
+}
 #list-edit {
 
 
@@ -455,12 +477,7 @@ header {
         input[name="title"] { 
             width: 75%; 
         }
-        input[type="text"] { 
-            /*background-color: transparent;*/
-            border: 0;
-            .box-shadow(~"inset rgba(35, 26, 26, 0.16) 1px 1px 3px 1px"); 
-            padding-left: 2px;
-        }
+        
         
         div.sp-replacer {
             .button3d-thin;
