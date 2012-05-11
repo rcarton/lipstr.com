@@ -4,6 +4,8 @@
     
     <script>
         var LOGIN_URL = '{% url login %}{% if next %}?next={{next}}{% endif %}';
+        var GMAIL_URL = '{% url oauth2 %}';
+        var SESSION_URL = '{% url session %}';
     </script>
 
     <script src="{{STATIC_URL}}js/login.js"></script>
@@ -27,7 +29,7 @@
     </form>
     
     <div id="or-login-with">
-        <p>or sign in with <a href="{% url oauth2 %}" id="gmail-button">gmail</a></p>
+        <p>or sign in with <a href="javascript: gmail();" id="gmail-button">gmail</a></p>
     </div>
     
     <div id="you-dont-have-an-account">

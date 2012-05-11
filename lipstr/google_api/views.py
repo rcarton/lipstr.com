@@ -21,6 +21,11 @@ import string
 STEP2_URI = settings.GOOGLE_API_CALLBACK_URI
 
 
+def get_session(request):
+    # We want to save this session to reuse the session key after the user has authorized
+    request.session.modified = True
+    
+    return HttpResponse("session set.", content_type="text/plain")
 
 def index(request):
     #storage = Storage(CredentialsModel, 'id', request.user, 'credential')
@@ -38,21 +43,25 @@ def index(request):
 
         authorize_url = flow.step1_get_authorize_url(STEP2_URI)
         
-        # Save the flow
-        f = FlowModel(id=request.session.session_key, flow=flow)
+        try:
+            f = FlowModel.objects.get(id=request.session.session_key)
+            f.flow = flow
+        except FlowModel.DoesNotExist:
+            # Save the flow
+            f = FlowModel(id=request.session.session_key, flow=flow)
         f.save()
         
-        # We want to save this session to reuse the session key after the user has authorized
-        request.session.modified = True
-        
         return HttpResponseRedirect(authorize_url)
-
+    
 def oauth2callback(request):
     
     try:
         f = FlowModel.objects.get(id=request.session.session_key)
         credential = f.flow.step2_exchange(request.REQUEST)
-    except (FlowModel.DoesNotExist, FlowExchangeError):
+    except FlowModel.DoesNotExist:
+        return error400(request, 'We could not sign you in, make sure you are not using an outdated link/bookmark.')
+    except FlowExchangeError:
+        f.delete()
         return error400(request, 'We could not sign you in, make sure you are not using an outdated link/bookmark.')
     
     #storage = Storage(CredentialsModel, 'id', request.user, 'credential')

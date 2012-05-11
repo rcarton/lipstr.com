@@ -9,6 +9,9 @@ urlpatterns = patterns('',
     url(r'^$', 'lists.views.home', name='home'),
     url('^oauth2callback$', 'google_api.views.oauth2callback', name='oauth2callback'),
     url('^oauth2$', 'google_api.views.index', name='oauth2'),
+    url('^session$', 'google_api.views.get_session', name='session'),
+    
+    
     url(r'^', include('lipstr.lists.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
