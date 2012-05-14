@@ -32,12 +32,16 @@ ko.bindingHandlers.taskClick = {
 			var dblclick = valueAccessor().dblclick|| function() {};
 			var longclick = valueAccessor().longclick || function() {};
 			var dragclick = valueAccessor().dragclick || function() {};
+			var rightclick = valueAccessor().rightclick || function() {};
+			var middleclick = valueAccessor().middleclick || function() {};
 
 			$(element).robertClick({
 		    	click: click,
 		    	dblclick: dblclick,
 		    	longclick: longclick,
-		    	dragclick: dragclick
+		    	dragclick: dragclick,
+		    	rightclick: rightclick,
+		    	middleclick: middleclick
 			});
 		},
 		update: function(element, valueAccessor, allBindingsAccessor, viewModel) {

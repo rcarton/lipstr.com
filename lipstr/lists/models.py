@@ -69,12 +69,14 @@ class Item(models.Model):
     
     description = models.CharField(max_length=200)
     position = models.IntegerField()
+    crossed = models.BooleanField(default=False)
     
     def to_obj(self):
         return {
                 'id': self.id,
                 'description': self.description,
                 'position': self.position,
+                'crossed': self.crossed,
                 }
         
     def save(self):

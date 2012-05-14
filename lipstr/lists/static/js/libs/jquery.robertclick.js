@@ -53,7 +53,9 @@
 			'click': function(e) {},
 			'dblclick': function(e) {},
 			'longclick': function(e) {},
-			'dragclick': function(e) {}
+			'dragclick': function(e) {},
+			'rightclick': function(e) {},
+			'middleclick': function(e) {}
 			
 		    }, options);
 		
@@ -63,6 +65,8 @@
 			var dblclick = function(e)  { clearAll(); settings['dblclick'](e); };
 			var longclick = function(e) { clearAll(); settings['longclick'](e); };
 			var dragclick = function(e) { clearAll(); settings['dragclick'](e); };
+			var rightclick = function(e) { clearAll(); settings['rightclick'](e); };
+			var middleclick = function(e) { clearAll(); settings['middleclick'](e); };
 			
 			var clearAll = function () {
 				$(document).off('mousemove.robertclick');
@@ -110,6 +114,21 @@
 				
 				return false;
 			}).on('mousedown.robertclick', function(e){
+				
+				// right click
+				if(e.button == 2) {
+					clearAll();
+					rightclick(e);
+					return;
+				}
+				
+				// scroll click
+				if(e.button == 1) {
+					clearAll();
+					middleclick(e);
+					return;
+				}
+				
 				dragClickFired = false;
 				
 				longClickTimer = window.setTimeout(function() { 

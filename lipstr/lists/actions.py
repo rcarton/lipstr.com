@@ -171,7 +171,7 @@ def edit_item(action, user):
     l = List.objects.get(id=action.get('listId', None))
     verify_permission(l, user)
     
-    editable_attributes = ('position', 'description')
+    editable_attributes = ('position', 'description', 'crossed')
     
     try:
         item = get_item(l.items, action['what']['id'])
