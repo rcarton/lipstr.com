@@ -21,16 +21,20 @@
                 <ul class="list-inner" data-bind="foreach: items, attr: {'data-id': id}, visible: items().length > 0">
                     
                     <li data-bind="text: description, 
-                                   taskClick: {click: function() { $root.remTask($parent, $data); }, 
+                                   taskClick: {click: function() { 
+                                                         $data.editAttribute($parent, 'crossed', !$data.crossed());
+                                                      }, 
                                                dragclick: function(e) { 
                                                     var dnd = new TaskDND(e.currentTarget, $root, $parent, $data);
                                                     dnd.drag(); 
                                                     
                                                 },
-                                               dblclick: function(e) { console.log('dblclick'); },
+                                               dblclick: function(e) { $root.remTask($parent, $data); },
                                                longclick: function(e) { $data.editItem($parent); },
                                                rightclick: function(e) { console.log('rightclick'); }},
-                                   attr: {'data-id': id}">
+                                   attr: {'data-id': id,
+                                          'class': crossed()?'crossed': ''
+                                         }">
                     </li>
                     
                     

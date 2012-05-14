@@ -133,11 +133,12 @@ Action.getEditListAction = function(list, attributes) {
 	return new Action('edit_list', o, list.id); 
 }
 
-function Task(id, description, position) {
+function Task(id, description, position, crossed) {
 	var self = this;
 	self.id = id;
 	self.description = ko.observable(description);
 	self.position = position;
+	self.crossed = ko.observable(crossed)
 	
     self.editItem = function(tasklist) {
     	var editItemDiv = $('#item-edit');
@@ -148,8 +149,8 @@ function Task(id, description, position) {
     	
     	// Triggered when save is clicked
     	var saveFn = function() { 
-    		if (self.description != editItemDiv.find('[data-property="description"]').val()) {
-    			self.description = editItemDiv.find('[data-property="description"]').val();
+    		if (self.description() != editItemDiv.find('[data-property="description"]').val()) {
+    			self.description(editItemDiv.find('[data-property="description"]').val());
     		}
     		
     		TaskListViewModel.instance.actions.push(Action.getEditItemAction(self, tasklist.id, { description: self.description }).toObj());
@@ -179,15 +180,27 @@ function Task(id, description, position) {
     	editItemDiv.find('[data-property="description"]').focus();
     }
 	
+    self.editAttribute = function(tasklist, attr, newValue) {
+    	
+    	if (typeof self[attr] === 'function') { self[attr](newValue); } 	// observable
+    	else if (typeof self[attr] === 'undefined') { return; } 		// undefined
+    	else { self[attr] = newValue; } 								// normal attribute
+    	
+    	var o = {};
+    	o[attr] = newValue;
+    	TaskListViewModel.instance.actions.push(Action.getEditItemAction(self, tasklist.id, o).toObj());
+		TaskListViewModel.instance.synchronizeOrSave();
+    } 
+    
 	self.toObj = function() {
-		return {id: self.id, description: self.description(), position: self.position};
+		return {id: self.id, description: self.description(), position: self.position, crossed: self.crossed()};
 	}
 	self.toJSON = function() {
 		return ko.toJSON(self.toObj());		
 	}
 }
 Task.clone = function (task) {
-	return new Task(getRandomId(), task.description(), task.position);
+	return new Task(getRandomId(), task.description(), task.position, task.crossed());
 }
 
 /**
@@ -205,7 +218,7 @@ function TaskList(data) {
 	
 	
 	for (var t in data.items)
-		self.items.push(new Task(data.items[t].id, data.items[t].description, data.items[t].position));
+		self.items.push(new Task(data.items[t].id, data.items[t].description, data.items[t].position, data.items[t].crossed));
 	
 	// Utils
 	
@@ -221,7 +234,7 @@ function TaskList(data) {
 	
 	// Operations 
     self.addTask = function() {
-    	var task = new Task(getRandomId(), self.newTaskText(), getUnixTimestamp());
+    	var task = new Task(getRandomId(), self.newTaskText(), getUnixTimestamp(), false);
         self.newTaskText("");
         self.items.push(task);
         return task;
@@ -275,8 +288,10 @@ function TaskList(data) {
     			if (oldValue != newValue) {
     				changed[$(this).attr("data-property")] = newValue;
     				
-    				// Change the value in the current object
-    				self[$(this).attr("data-property")] = newValue;
+    				// Change the value in the current object		
+    				if (typeof self[$(this).attr("data-property")] === 'function') { self[$(this).attr("data-property")](newValue); } 	// observable
+    		    	else if (typeof self[$(this).attr("data-property")] === 'undefined') { return; } 		// undefined
+    		    	else { self[$(this).attr("data-property")] = newValue; } 								// normal attribute
     				
     				somethingHasChanged = true;
     			}
