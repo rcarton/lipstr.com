@@ -204,9 +204,9 @@ function handleErrorForm(jForm, errors, direction) {
 		}
 
 		
-		jForm.append(errorDiv);
-		
-		$(errorDiv).effect('bounce', { times: 2, distance: 5, direction: direction }, 300);
+		//jForm.append(errorDiv);
+		jErrorField.parent().append(errorDiv);
+		$(errorDiv).click(function(){$(this).fadeOut();}).effect('bounce', { times: 2, distance: 5, direction: direction }, 300);
 	}
 }
 

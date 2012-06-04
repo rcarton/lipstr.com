@@ -1,26 +1,5 @@
-{% extends "base.html" %}
+{% extends "page.html" %}
 {% load gravatar %}
-
-{% block header %}
-<header>
-    <div id="header-content">
-        <a id="logo-header" href="/"> </a>
-        <div id="menu">
-            
-            <div id="username">
-                <img id="profile_image" src="{% gravatar_url user.email %}">
-                {% if user.first_name %}{{user.first_name|capfirst}}{% else %}{{user.username}}{% endif %}
-            </div>
-           
-            <ul id="menu-dropdown">
-                <li><a href="{% url disconnect %}">Sign out</a></li>
-            </ul>
-            
-        </div>
-    </div>
-</header>
-
-{% endblock %}
 
 {% block body %}
 

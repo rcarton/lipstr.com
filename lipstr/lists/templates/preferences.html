@@ -1,0 +1,97 @@
+{% extends "page.html" %}
+
+{% block body %}
+    
+    <div id="page-content">
+        <div id="preferences">
+            <h1>Preferences</h1>
+            <form id="preferences-form" action="{% url preferences %}" method="POST">{% csrf_token %}
+                
+                <input type="hidden" name="user" value="{{ user }}">
+                
+                <div class="value">
+                    <label for="display_name">Display Name</label>
+                    
+                    <div class="value-change">
+                        <input type="text" id="display_name" value="{{user.first_name}}" name="displayname">
+                    </div>
+                    <div style="clear: both"></div>
+                </div>
+                
+                <div class="value">
+                    <label for="old_password">Change Password</label>
+                    
+                    <div class="value-change">
+                        <input type="password" name="oldpassword" id="old_password" placeholder="old password" style="clear: right; margin-bottom: 0.5em; ">
+                        <input type="password" name="newpassword" id="new_password" placeholder="new password">
+                    </div>
+                    <div style="clear: both"></div>
+                </div>
+                
+                <div class="value">
+                    <label for="icon">Icon</label>
+                    
+                    <div class="value-change">
+                    </div>
+                    <div style="clear: both"></div>
+                </div>
+                
+                <div class="menu">
+                    <input class="button3d-thin" type="submit" value="save">
+                    <input class="button3d-thin" type="submit" value="cancel">
+                    <div style="clear: both"></div>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+
+
+{% endblock %}
+
+
+{% block custom-js %}
+
+<script>
+
+var errors = {% if errors %}{{ errors|safe }}{% else %}undefined{%endif%};
+
+if(errors != undefined) {
+    handleErrorForm($('#preferences-form'), errors)
+}
+
+
+/*
+function save() {
+    
+    $.ajax(SAVE_PREFERENCES_URL, {
+        data: $('#preferences-form').serialize(),
+        type: 'POST', 
+        contentType: 'application/json',
+        success: function(data) {
+            if(data.errors != undefined) {
+                // Error case
+                handleErrorForm($('#preferences-form'), data.errors)
+            } else {
+                // Registraiton successful
+                window.location.href = data.next
+            }
+        },
+        error: function(data, status) {
+            console.log('There was an error.');
+        }
+    });
+    
+    return false;
+}
+
+$(document).ready(function() {
+    
+    var oSignup = $('input[value="save"]')[0];
+    
+    oSignup.onsubmit = save;
+    
+});*/
+</script>
+    
+{% endblock %}

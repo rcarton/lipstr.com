@@ -217,6 +217,41 @@ header {
 
 }
 
+/* --- forms --- */
+.form-error { 
+        
+     @color: #d0717f;
+     
+     position: absolute;
+     float: left;
+     line-height: 24px;
+     background: @color;
+     padding: 0 0.6em;
+     white-space: nowrap;
+     margin: 1px 0 0 20px;
+     box-shadow: rgba(0, 0, 0, 0.4) 1px 1px 3px;
+     color: #222;
+     
+     &:before {
+         display: block;
+         height: 0;   
+         content: '';
+         position: absolute;
+     }
+     
+     &.down:before { 
+         border-left: 10px solid transparent;border-right: 10px solid transparent;border-top: 10px solid #D0717F;
+         margin-left: -3px;
+         margin-top: 20px
+     }
+     &.left:before {
+         border-top: 10px solid transparent;border-bottom: 10px solid transparent;border-right: 10px solid @color;
+         margin-left: -13px;
+         margin-top: 2px;
+     }
+     
+} 
+     
 /* --- login ---- */
 
 #login {
@@ -242,40 +277,7 @@ header {
         
 	a { font-weight: bold; color: inherit; &:hover { color: darken(#36687a, 15%); .transition; } }
 	p { font-size: 15px; font-family: Arvo, Arial; .textinset; } 
-	
-    .form-error { 
-            
-         @color: #d0717f;
-         
-         position: absolute;
-         float: left;
-         line-height: 24px;
-         background: @color;
-         padding: 0 0.6em;
-         white-space: nowrap;
-         margin: 1px 0 0 20px;
-         box-shadow: rgba(0, 0, 0, 0.4) 1px 1px 3px;
-         
-         &:before {
-             display: block;
-             height: 0;   
-             content: '';
-             position: absolute;
-         }
-         
-         &.down:before { 
-             border-left: 10px solid transparent;border-right: 10px solid transparent;border-top: 10px solid #D0717F;
-             margin-left: -3px;
-	         margin-top: 20px
-         }
-         &.left:before {
-             border-top: 10px solid transparent;border-bottom: 10px solid transparent;border-right: 10px solid @color;
-             margin-left: -13px;
-             margin-top: 2px;
-         }
-         
-     } 
-        
+	     
 	form {
 	    padding: 1em 0;
         position: relative;
@@ -409,6 +411,14 @@ header {
 }
 
 
+input[type="text"], input[type="password"] { 
+    /*background-color: transparent;*/
+    border: 0;
+    .box-shadow(~"inset rgba(35, 26, 26, 0.16) 1px 1px 3px 1px"); 
+    padding-left: 2px;
+}
+        
+
 /* ---- list ---- */
 .button3d-thin {
             height: 24px;
@@ -444,12 +454,6 @@ header {
         margin-top: 9px;
         padding: 0 8px 8px 8px;
         
-        input[type="text"] { 
-            /*background-color: transparent;*/
-            border: 0;
-            .box-shadow(~"inset rgba(35, 26, 26, 0.16) 1px 1px 3px 1px"); 
-            padding-left: 2px;
-        }
     }
     
     .popup-menu {
@@ -673,6 +677,69 @@ li.list {
         &:active { height: 28px; margin-bottom: -3px; padding-top: 1px;}
     }
 }
+
+
+#page-content {
+	padding-top: 60px;
+	max-width: 640px;
+	margin: auto;
+	padding-left: 4px;
+	padding-right: 4px;
+	padding-bottom: 6px;
+	text-align: center;
+	color: #727272;
+	
+	h1 {
+		border-bottom: 1px solid #CFCFCF;
+		margin-bottom: 1em;
+		font-family: Open sans condensed;
+		font-size: 18px;
+		font-weight: normal;
+		line-height: 3em;
+    }
+    
+    input[type="text"], input[type="password"] {
+        border: 1px solid #CFCFCF;
+    }
+    
+    .value {
+        margin-bottom: 1.45em;
+    
+	    label {
+	        display: block;
+	        width: 40%;
+	        float: left;
+	        text-align: right;
+	    }
+	    
+	    .value-change {
+	       width: 50%;
+	       float: left;
+	       position: relative;
+	       clear: right;
+	       text-align: left;
+	       padding-left: 20px;
+	       
+	       input {
+	           min-width: 150px;
+	           width: 90%;
+	       }
+	    }
+    }
+    
+    .menu {
+        border-top: 1px solid #CFCFCF;
+        margin-top: 3em;
+        padding-top: 1em;
+           
+        .button3d-thin {
+            padding-left: 1.5em;
+            padding-right: 1.5em;
+        }
+    }
+    
+}
+
 
 @import "media-queries.less";
 @import "print.less";

@@ -653,27 +653,5 @@ TaskListViewModel.instance = new TaskListViewModel();
 ko.applyBindings(TaskListViewModel.instance);
 
 
-$(document).ready(function() {
-	
-	var menudd = $('#menu-dropdown');
-	
-	// menu
-	$('#username').click(function(e) {
-		if (!menudd.hasClass('active')) menudd.addClass('active');
-		else { menudd.removeClass('active'); }
-		e.stopPropagation();
-	});
-	
-	$(document).click(function() {
-		menudd.removeClass('active');
-		
-		// remove li-menu-dropdown and mask
-		$('.li-menu-dropdown').hide();
-		$('.mask').remove();
-		
-	});
-	
-});
-
 
 

@@ -1,6 +1,6 @@
 {% extends "layouts/blue.html" %}
 
-{% block custom-js %}
+{% block template-custom-js %}
     
     <script>
         var LOGIN_URL = '{% url login %}{% if next %}?next={{next}}{% endif %}';

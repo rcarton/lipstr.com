@@ -8,7 +8,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template.context import RequestContext
 from django.utils import simplejson
 from lists.actions import process_actions
-from lists.forms import SignupForm
+from lists.forms import SignupForm, PreferencesForm
 from lists.models import List
 
 @login_required
@@ -30,6 +30,7 @@ def login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
+        
         if user is not None:
             next = next or '/'
             auth.login(request, user)
@@ -146,6 +147,20 @@ def create_account(signup_form):
     user.save()
     
     return {}
+
+@login_required
+def preferences(request):
+    
+    if request.method == 'POST': # If the form has been submitted...
+        form = PreferencesForm(request.POST) # A form bound to the POST data
+        if not form.is_valid():
+            return render_to_response('preferences.html', RequestContext(request, {'errors': simplejson.dumps(form.errors)}))
+        
+    return render_to_response('preferences.html', RequestContext(request, {}))
+    
+    
+
+
 
 def error404(request):
     raise Exception()

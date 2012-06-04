@@ -1,2 +1,5 @@
 raven>=1.7.3
 google-api-python-client
+simplejson
+oauth
+gunicorn

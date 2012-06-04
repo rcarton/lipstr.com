@@ -55,6 +55,9 @@ def index(request):
     
 def oauth2callback(request):
     
+    if request.GET.get('error', ''):
+        return redirect('login')
+    
     try:
         f = FlowModel.objects.get(id=request.session.session_key)
         credential = f.flow.step2_exchange(request.REQUEST)
