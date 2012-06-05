@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load gravatar %}
 
 {% block header %}
 <header>
@@ -8,11 +7,12 @@
         <div id="menu">
             
             <div id="username">
-                <img id="profile_image" src="{% gravatar_url user.email %}">
+                <img class="profile_icon" src="{{ user.get_profile.get_icon_url }}">
                 {% if user.first_name %}{{user.first_name|capfirst}}{% else %}{{user.username}}{% endif %}
             </div>
            
             <ul id="menu-dropdown">
+                <li><a href="{% url preferences %}">Preferences</a></li>
                 <li><a href="{% url disconnect %}">Sign out</a></li>
             </ul>
             

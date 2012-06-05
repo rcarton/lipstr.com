@@ -3,6 +3,8 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.utils import simplejson
 from djangotoolbox.fields import ListField, EmbeddedModelField
+import hashlib
+import urllib
 
 class List(models.Model):
     """This is a generic list."""
@@ -84,7 +86,22 @@ class Item(models.Model):
     
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
+    icon = models.CharField(max_length=250, default='')
     lists = ListField(models.ForeignKey(List))
+    
+    def get_icon_url(self):
+        email = self.user.email
+        
+        default = "http://lipstr.com/static/img/default_profile.png"
+        size = 22
+        
+        if self.icon:
+            icon_url = self.icon
+        else:
+            icon_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?"
+            icon_url += urllib.urlencode({'d':default, 's':str(size)})
+
+        return icon_url
     
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

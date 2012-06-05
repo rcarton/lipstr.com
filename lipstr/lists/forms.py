@@ -26,6 +26,7 @@ class PreferencesForm(forms.Form):
                                                'max_length': 'Password too long (really?).',
                                                })
     oldpassword = forms.CharField(required=False)
+    icon = forms.CharField(max_length=250, required=False)
     
     def clean(self):
         cleaned_data = super(PreferencesForm, self).clean()
@@ -39,8 +40,8 @@ class PreferencesForm(forms.Form):
                 self._errors['oldpassword'] = self.error_class([u'Invalid password.'])
                 del cleaned_data['oldpassword']
             
-            if not newpassword:
-                self._errors['newpassword'] = self.error_class([u'The new password cannot be empty'])
-                del cleaned_data['newpassword']
+            #if not newpassword:
+            #    self._errors['newpassword'] = self.error_class([u'The new password cannot be empty'])
+            #    del cleaned_data['newpassword']
 
         return cleaned_data

@@ -129,6 +129,11 @@ h1, h2, h3, h4 { margin: 0; line-height: initial; color: @grey1; }
 ul, li {margin: 0; padding: 0;}
 li { list-style-type: none;}
 
+.profile_icon {
+	max-width: 22px;
+	max-height: 22px;	
+}
+
 header {
 	@header_height: 36px;
 	
@@ -184,7 +189,7 @@ header {
 	                cursor: pointer;
                 }
                 
-                img {
+                img.profile_icon {
                     vertical-align: text-bottom;
                     padding-right: 3px;
                 }
@@ -738,6 +743,17 @@ li.list {
         }
     }
     
+    
+    #preferences {
+    
+        .profile_icon {
+            background: #f1f1f1;
+            border: 1px solid grey;
+            margin: 4px 4px;
+            padding: 1px;
+            .border-radius(3px);
+        }
+    }
 }
 
 

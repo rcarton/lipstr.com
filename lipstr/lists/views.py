@@ -156,6 +156,32 @@ def preferences(request):
         if not form.is_valid():
             return render_to_response('preferences.html', RequestContext(request, {'errors': simplejson.dumps(form.errors)}))
         
+        # Save the changes
+        user = request.user
+        userprofile = user.get_profile()
+        must_save = {'user': False, 'userprofile': False}
+        
+        # display name
+        ndisplayname = form['displayname'].value().strip()
+        if ndisplayname and ndisplayname != user.first_name:
+            user.first_name = ndisplayname
+            must_save['user'] = True
+            
+        #password
+        if form['oldpassword'].value() and form['newpassword'].value(): 
+            user.set_password(form['newpassword'].value())
+            must_save['user'] = True
+            
+        #icon
+        if form['icon'].value() != userprofile.get_icon_url():
+            userprofile.icon = form['icon'].value()
+            must_save['userprofile'] = True
+        
+        if must_save['user']: user.save()
+        if must_save['userprofile']: userprofile.save()
+        
+        return redirect('/')
+        
     return render_to_response('preferences.html', RequestContext(request, {}))
     
     

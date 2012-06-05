@@ -13,6 +13,7 @@ DJANGOROOT = os.path.join(APPROOT, 'lipstr')
 env.user = 'lipstr'
 # the servers where the commands are executed
 env.hosts = ['lipstr.com']
+
 env.activate = 'source '+ os.path.join(APPROOT, 'bin/activate')
 env.deploy_user = 'lipstr'
 

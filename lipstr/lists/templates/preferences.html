@@ -32,7 +32,10 @@
                     <label for="icon">Icon</label>
                     
                     <div class="value-change">
+                        <img class="profile_icon" src="{{ user.get_profile.get_icon_url }}"><br>
+                        <input type="text" id="icon" value="{{ user.get_profile.icon }}" name="icon">
                     </div>
+                    
                     <div style="clear: both"></div>
                 </div>
                 
