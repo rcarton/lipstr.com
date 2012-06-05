@@ -14,7 +14,8 @@ class SignupForm(forms.Form):
                                                'max_length': 'Password too long (really?).',
                                                })
     firstname = forms.CharField(required=False)
-
+    icon = forms.CharField(max_length=250, required=False)
+    
 
 class PreferencesForm(forms.Form):
     user = forms.CharField()

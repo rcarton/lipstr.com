@@ -146,6 +146,11 @@ def create_account(signup_form):
     
     user.save()
     
+    if signup_form['icon']: 
+        profile = user.get_profile()
+        profile.icon = signup_form['icon'].value()
+        profile.save()
+        
     return {}
 
 @login_required

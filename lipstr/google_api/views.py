@@ -89,12 +89,17 @@ def oauth2callback(request):
     signup['username'] = infos.get('email') 
     signup['email'] = infos.get('email') 
     
-    # TODO: avatar
-    #signup['avatar'] = infos.get('picture') 
+    signup['icon'] = infos.get('picture', '')
     
     # If the user does not exist: create it
     try:
         user = User.objects.get(username=signup['email'])
+        
+        p = user.get_profile()
+        if signup['icon'] and p and not p.icon:
+            p.icon = signup['icon']
+            p.save()
+        
     except User.DoesNotExist:
         user = None
     
