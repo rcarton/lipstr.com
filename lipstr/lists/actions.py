@@ -39,7 +39,7 @@ def add_task(action, user):
     """
     
     item = Item()
-    item.description = action['what']['description']
+    item.description = action['what'].get('description', '')
     item.id = action['what']['id']
     item.position = action['what']['position']
     

@@ -34,6 +34,8 @@ var APPLICATION_NAME = "lipstr.com";
 
 var DEBUG_OFFLINE = false; 
 
+var COLUMNWIDTH = 360;
+var GUTTERWIDTH = 20;
 
 function Menu() {
 	var self = this;
@@ -64,16 +66,25 @@ function isOnline() {
 }
 
 function initMasonry() {
-	$('#list-container > ul').masonry({
-		  itemSelector: 'li.list',
-		  columnWidth: 360,
-		  gutterWidth: 20,
-		  isFitWidth: true
-	});
+	
+	var options = {
+					  itemSelector: 'li.list',
+					  columnWidth: COLUMNWIDTH,
+					  gutterWidth: GUTTERWIDTH,
+					  isFitWidth: true
+				  };
+	
+	// Use a previously saved layout if there is one
+	if (Modernizr.localstorage && Modernizr.applicationcache && localStorage['masonry-layout'] != undefined) {
+		options['layout'] = $.parseJSON(localStorage['masonry-layout']);
+	}
+	
+	$('#list-container > ul').masonry(options);
 }
 
 function reloadMasonry() { 
 	$('#list-container > ul').masonry('reload'); 
+	$('#list-container > ul').masonry('saveLayout'); 
 }
 
 /**
@@ -441,6 +452,9 @@ function TaskListViewModel(id) {
 	}
 	
 	self.addTask = function(tasklist, task) {
+		
+		// do not add empty tasks
+		if (!tasklist.newTaskText()) return;
     	if (!task) task = tasklist.addTask();
     	
     	self.actions.push(Action.getAddTaskAction(task, tasklist.id).toObj());

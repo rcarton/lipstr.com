@@ -2,7 +2,7 @@
 <div id="list-container">
     
     <ul data-bind="foreach: tasklists, visible: tasklists().length > 0">
-        <li class="list" data-bind="attr: {'data-id': id}">
+        <li class="list" data-bind="attr: {'data-id': id, 'data-masonry-id': id}">
             <div class="li-wrapper">
                 
                 {# ---- List header ---- #}
@@ -78,4 +78,3 @@
         <div style="clear: both"></div>
     </div> 
 </div>
-

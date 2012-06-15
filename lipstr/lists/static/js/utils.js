@@ -235,4 +235,30 @@ function hideMask() {
 }
 
 
-
+function toSortedArray(obj, cmp) {
+	var r = new Array();
+	
+	// insert at the right place
+	var insert = function(elem) {
+		if (r.length == 0) {
+			r.push(elem);
+		} else {
+			var i=0
+			for (;i < r.length && cmp(elem, r[i]) > 0; i++) {}
+			if (i == r.length) {
+				r.push(elem)
+			} else {
+				r.splice(i, 0, elem);
+			}
+		}
+	}
+	
+	var keys = [];
+	for (var key in obj) {
+		if (obj.hasOwnProperty(key))
+			insert(obj[key]);
+	}
+	keys.sort();
+	
+	return r;
+}
