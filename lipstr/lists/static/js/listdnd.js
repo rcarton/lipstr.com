@@ -24,6 +24,8 @@ function ListDND(obj) {
 		
 		$(document).on('mousemove.ListDND', function(e) { self.showPlaceholder(e); self.followPointer(e); } );
 		$(document).on('mouseup.ListDND', self.drop);	
+		
+		$(self.obj).addClass('dragged');
 	}
 	
 	self.drop = function(e) {
@@ -45,7 +47,8 @@ function ListDND(obj) {
 			$(this).css('top', $(this).position().top - $('#block-placeholder').outerHeight(true) + 'px');
 		});
 		$('#block-placeholder').remove();
-		$(self.obj).css('z-index', 100);	
+		$(self.obj).css('z-index', 100);
+		$(self.obj).removeClass('dragged');
 	}
 	
 	self.followPointer = function(e) {
@@ -81,7 +84,7 @@ function ListDND(obj) {
 		var y = event.pageY;
 
 		var col = Math.max(0, Math.floor((x - $obj.offset().left)/mason.columnWidth));
-		col = Math.min(mason.cols -1, col);
+		col = Math.min(mason.cols - 1, col);
 			
 		// Placeholder coordinates
 		var phX = $obj.offset().left + col * mason.columnWidth;
