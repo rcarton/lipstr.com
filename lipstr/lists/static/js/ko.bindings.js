@@ -1,12 +1,4 @@
 
-/**
- * TaskClick: 
- *   alternate event management system for knockoutjs
- *   
- *   
- */
-
-
 function editTask() {
 	console.log('edit task');
 }

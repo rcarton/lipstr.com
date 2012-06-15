@@ -1,4 +1,139 @@
+function ListDND(obj) {
+	var self = this;
+	var lists = $('li.list');
+	var listitems = $('ul.list-inner li');
+	
+	self.obj = $(obj).closest('li.list');
+	self.$masonry = $('#list-container > ul');
+	self.instance = $.data(self.$masonry[0], 'masonry');
+	
+	// Offsets for drag and drop
+	self.mouseOffsetX = 0;
+	self.mouseOffsetY = 0;
+	
+	// Column where the block to move is
+	self.originCol =  Math.max(0, Math.floor($(obj).offset().left/self.instance.columnWidth))
+	self.destinationCol = -1;
+	self.destinationPos = -1;
+	
+	
+	self.drag = function() {
+		
+		// Remove the object from the groupBlocks
+		self.removeFromColBricks();
+		
+		$(document).on('mousemove.ListDND', function(e) { self.showPlaceholder(e); self.followPointer(e); } );
+		$(document).on('mouseup.ListDND', self.drop);	
+	}
+	
+	self.drop = function(e) {
+		self.clear();
+		
+		self.instance.colBricks[self.destinationCol].splice(self.destinationPos, 0, self.obj);
+		
+		$('#list-container > ul').masonry('saveLayout'); 
+		$('#list-container > ul').masonry('reload'); 
+	}
+	
+	self.clear = function() {
+		
+		$(document).off('mousemove.ListDND mouseup.ListDND');
+		
+		// Remove the placeholder and replace all the blocks
+		$('.after-placeholder').each(function() {
+			$(this).removeClass('after-placeholder');
+			$(this).css('top', $(this).position().top - $('#block-placeholder').outerHeight(true) + 'px');
+		});
+		$('#block-placeholder').remove();
+		$(self.obj).css('z-index', 100);	
+	}
+	
+	self.followPointer = function(e) {
+		self.mouseOffsetX = self.mouseOffsetX || $(self.obj).position().left - e.pageX;
+		self.mouseOffsetY = self.mouseOffsetY || $(self.obj).position().top - e.pageY;
+		
+		//console.log('top: '+ $(self.obj).position().top + 'mouse: ' + e.pageY + 'offset: ' + self.mouseOffsetY);
+		
+		$(self.obj).css('left', e.pageX + self.mouseOffsetX + 'px');
+		$(self.obj).css('top', e.pageY + self.mouseOffsetY + 'px')
+		$(self.obj).css('z-index', 206);	
+	}
+	
+	self.removeFromColBricks = function() {
+		var i=0, len = self.instance.colBricks[self.originCol].length;
+		for (; i<len; i++) {
+			if (self.instance.colBricks[self.originCol][i].attr('data-id') == $(self.obj).attr('data-id')) break;
+		}
+		if (i < self.instance.colBricks[self.originCol].length) self.instance.colBricks[self.originCol].splice(i, 1);
+	}
+	
+	self.showPlaceholder = function(e) {
+		
+		var obj = self.$masonry[0];
+		var $obj = $(obj);
+		
+		//var mason = self.instance
+		//var mason = $.data(self.$masonry[0], 'masonry');
+		var mason = self.instance;
+		if (!mason) return;
+		
+		var x = event.pageX;
+		var y = event.pageY;
 
+		var col = Math.max(0, Math.floor((x - $obj.offset().left)/mason.columnWidth));
+		col = Math.min(mason.cols -1, col);
+			
+		// Placeholder coordinates
+		var phX = $obj.offset().left + col * mason.columnWidth;
+		var phY = $obj.offset().top;
+		
+		var i, len;
+		for (i=0, len=mason.colBricks[col].length; i<len; i++) {
+			var block = mason.colBricks[col][i];
+			
+			// If the placeholder has to be before this block, break
+			if (y < (block.offset().top + block.height()/2)) break;
+			
+			phY = block.offset().top + block.height() + 10;
+		}
+		self.destinationCol = col;
+		self.destinationPos = i;
+		
+		var $ph = $('#block-placeholder');
+		
+		$ph.height($(self.obj).height());
+		
+		if (!$ph.length) {
+			// Create the placeholder
+			var ph = document.createElement('div');
+			ph.setAttribute('id', 'block-placeholder');
+			$(document.body).append(ph);
+			
+			$ph = $(ph);
+		}
+		
+		var phHeight = $ph.outerHeight(true);
+
+		// Update the placeholder if the position has changed.
+		if ($ph.position().top != phY || $ph.position().left != phX) {
+			$('#block-placeholder').css('top', phY + 'px').css('left', phX + 'px');
+			$('.after-placeholder').each(function() {
+				$(this).removeClass('after-placeholder');
+				$(this).css('top', $(this).position().top - phHeight + 'px');
+			});
+			
+			// Update the blocks after the placeholder (re-using i and len here)
+			for (; i<len; i++) {
+				var block = mason.colBricks[col][i];
+				
+				if (!block.hasClass('after-placeholder')) {
+					block.css('top', block.position().top + phHeight + 'px');
+					block.addClass('after-placeholder');
+				}
+			}
+		}
+	}
+}
 
 function TaskDND(obj, model, list, item) {
 	
@@ -38,7 +173,7 @@ function TaskDND(obj, model, list, item) {
 			self.itemover = e.currentTarget;
 			
 			// We have to attach it to list items (again) because mouseup is attached by 
-			// robertclick, and prevented from bubbling
+			// robertclick, and prevented from bubbling (TODO: THIS LINE MAY BE DEPRECATED).
 			$(this).on('mouseup.taskDND', function(e) { 
 				self.drop(); 
 			});
@@ -141,7 +276,4 @@ function TaskDND(obj, model, list, item) {
 		
 		$(document.body).append(self.node);
 	}
-	
-	
-	
-};
+}

@@ -6,7 +6,13 @@
             <div class="li-wrapper">
                 
                 {# ---- List header ---- #}
-                <div class="li-header" data-bind="attr: {style: 'background-color: '+ color() }">
+                <div class="li-header" data-bind="attr: {style: 'background-color: '+ color() },
+                                                  taskClick: {
+                                                    dragclick: function(e) { 
+                                                      var dnd = new ListDND(e.currentTarget);
+                                                      dnd.drag(); 
+                                                    }
+                                                  }">
                     <div class="li-menu" data-bind="click: TaskList.toggleLiMenu">
                         <div class="li-button"> </div>
                         <ul class="li-menu-dropdown">

@@ -85,7 +85,7 @@
 			var dragClickFired = false;
 			
 			// Disable normal clicks
-			$this.off('click dblclick dragstart');
+			//$this.off('click dblclick dragstart');
 			
 			$this.on('mouseup.robertclick', function(e) { 
 				
@@ -112,7 +112,7 @@
 				}
 				obj.lastUp = new Date().getTime();
 				
-				return false;
+				//return false;
 			}).on('mousedown.robertclick', function(e){
 				
 				// right click
