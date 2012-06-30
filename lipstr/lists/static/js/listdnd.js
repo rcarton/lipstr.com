@@ -272,6 +272,7 @@ function TaskDND(obj, model, list, item) {
 		self.node.style.padding = self.jobj.css('padding');		
 		self.node.style.left = self.jobj.offset().left + 'px'; 
 		self.node.style.top = self.jobj.offset().top + 'px'; 
+		self.node.style.zIndex = 500; 
 		
 		// If if ever want to drag the element under the cursor, this should prevent the dragged div
 		// from preventing to 'see' what's underneath the cursor.

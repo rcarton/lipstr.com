@@ -68,7 +68,8 @@ def actions(request):
         
         modified_l, id_replacements  = process_actions(actions, request.user)
         
-        lists_to_return = [l.to_obj() for l in modified_l]
+        #import pdb; pdb.set_trace()
+        lists_to_return = [l.to_obj() for l in modified_l.itervalues()]
         
         # Add tmp_id_replacement for new lists -> to replace the temporary ids in the DOM list
         for tmp_id, new_id in id_replacements:

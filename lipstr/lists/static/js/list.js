@@ -200,7 +200,7 @@ function Task(id, description, position, crossed) {
     	var o = {};
     	o[attr] = newValue;
     	TaskListViewModel.instance.actions.push(Action.getEditItemAction(self, tasklist.id, o).toObj());
-		TaskListViewModel.instance.synchronizeOrSave();
+		TaskListViewModel.instance.synchronizeOrSave(true);
     } 
     
 	self.toObj = function() {
@@ -410,7 +410,11 @@ function TaskListViewModel(id) {
 	self.actions = new Array();
 	self.menu = ko.observable();
 	
+	var delayedSynchronizeTimer;
+	
 	initMasonry();
+	
+	
 	
 	// Methods
 	self.hasAppCache = function() { return (Modernizr.localstorage && Modernizr.applicationcache && localStorage[APPLICATION_NAME] != undefined); }
@@ -480,9 +484,11 @@ function TaskListViewModel(id) {
     	
     };
     
-    self.synchronizeOrSave = function(callback) {
+    self.synchronizeOrSave = function(delay, callback) {
+    	
     	if (isOnline()) {
-    		self.synchronizeLists(callback);
+    		if (delay) self.delayedSynchronizeLists(callback);
+    		else self.synchronizeLists(callback);
     	} else {
     		self.saveLocal(callback);
     		reloadMasonry();
@@ -608,6 +614,7 @@ function TaskListViewModel(id) {
                 },
                 error: function(data, status) {
                 	console.log('Error while synchronizing list: ' + status);
+                	reloadMasonry();
                 }
             }); 
     	} else {
@@ -616,6 +623,21 @@ function TaskListViewModel(id) {
 		
 		// Save the brand new model
 		
+    }
+    
+    /**
+     * Delayed synchronize lists: groups events before synchronizing
+     */
+    self.delayedSynchronizeLists = function(callback) {
+    	
+    	if (delayedSynchronizeTimer) {
+			window.clearTimeout(delayedSynchronizeTimer);
+    	}
+    	
+    	delayedSynchronizeTimer = window.setTimeout(function() { 
+				self.synchronizeLists(callback);
+			}, 500);
+    	
     }
     
     /**

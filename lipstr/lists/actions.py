@@ -203,7 +203,7 @@ def process_actions(actions, user):
                }
     
     #TODO: handle errors
-    modified_lists = set()
+    modified_lists = dict()
     tmp_id_to_new_ids = []  # [(<tmp id>, <new id>), ..]
     
     while actions:
@@ -221,7 +221,7 @@ def process_actions(actions, user):
             continue
         
         # If there's a return value
-        if returned_list: modified_lists.add(returned_list)
+        if returned_list: modified_lists[returned_list.id] = returned_list
         
         if action['type'] == 'add_list':
             # Change the temporary id to the new id in all the remaining actions
