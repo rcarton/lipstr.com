@@ -70,7 +70,7 @@ function ListDND(obj) {
 		if (i < self.instance.colBricks[self.originCol].length) self.instance.colBricks[self.originCol].splice(i, 1);
 	}
 	
-	self.showPlaceholder = function(e) {
+	self.showPlaceholder = function(event) {
 		
 		var obj = self.$masonry[0];
 		var $obj = $(obj);
