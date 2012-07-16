@@ -29,24 +29,23 @@ class List(models.Model):
         return simplejson.dumps(self.to_obj())    
     
     @classmethod
-    def get_lists_for_user(cls, user):
+    def get_lists_for_user(cls, user, board_title=None):
         userprofile = user.get_profile()
-        lists = List.objects.filter(id__in=userprofile.lists)
         
-        ## Uncomment if I implement shared lists
-        # Remove non existing lists (removed ones)
-        #if len(lists) < len(userprofile.lists):
-        #    
-        #    found = set([l.id for l in lists])
-        #    listed = set(userprofile.lists)
-        #   
-        #   difference = (listed - found)
-        #   if len(difference): 
-        #       for l in difference:
-        #           userprofile.lists.remove(l)
-        #       userprofile.save()
-            
-        return lists
+        b = None
+        
+        # if no board name is specified, get the first
+        if board_title == None:
+            b = userprofile.boards[0]
+        else:
+            for tmp_board in userprofile.boards:
+                if tmp_board.title == board_title:
+                    b = tmp_board
+        
+        if b == None:
+            raise Board.DoesNotExist()
+        
+        return List.objects.filter(id__in=b.lists)
     
     def remove_item(self, item_id):
         for i in xrange(len(self.items)):
@@ -64,8 +63,31 @@ class List(models.Model):
         
         #TODO: r&a permission
         return (self.creator == user)
+
+class Board(models.Model):
+    title = models.CharField(max_length=50)
+    creator = models.ForeignKey(User)
+    lists = ListField(models.ForeignKey(List))
     
-    
+    @classmethod
+    def migrate_users_to_board(cls):
+        
+        # For each user, move the lists to a new board called 'home'
+        for u in User.objects.all():
+            print 'migrating %s..' % u
+            userprofile = u.get_profile()
+            
+            if len(userprofile.boards) > 0: continue
+            
+            board = Board()
+            board.creator = u
+            board.title = 'home'
+            board.lists = userprofile.lists
+            
+            userprofile.boards.append(board)
+            userprofile.save()
+        
+             
 class Item(models.Model):
     """This model should never be saved in a collection."""
     
@@ -87,7 +109,11 @@ class Item(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     icon = models.CharField(max_length=250, default='')
+    boards = ListField(EmbeddedModelField('Board'))
+    
+    # Deprecated do not use - will be removed once the migration is done for all users
     lists = ListField(models.ForeignKey(List))
+    
     
     def get_icon_url(self):
         email = self.user.email
