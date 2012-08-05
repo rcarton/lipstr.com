@@ -75,7 +75,8 @@ function initMasonry() {
 				  };
 	
 	// Use a previously saved layout if there is one
-	if (Modernizr.localstorage && Modernizr.applicationcache && localStorage['masonry-layout'] != undefined) {
+	//if (Modernizr.localstorage && Modernizr.applicationcache && localStorage['masonry-layout'] != undefined) {
+	if (localStorage['masonry-layout'] != undefined) {
 		options['layout'] = $.parseJSON(localStorage['masonry-layout']);
 	}
 	
@@ -409,6 +410,7 @@ function TaskListViewModel(id) {
 	self.tasklists = ko.observableArray([]);
 	self.actions = new Array();
 	self.menu = ko.observable();
+	self.currentBoard = null;
 	
 	var delayedSynchronizeTimer;
 	
@@ -418,6 +420,7 @@ function TaskListViewModel(id) {
 	
 	// Methods
 	self.hasAppCache = function() { return (Modernizr.localstorage && Modernizr.applicationcache && localStorage[APPLICATION_NAME] != undefined); }
+	//self.hasAppCache = function() { return (localStorage[APPLICATION_NAME] != undefined); }
     
 	self.addTaskList = function() {
 		
@@ -497,7 +500,7 @@ function TaskListViewModel(id) {
     
     self.saveLocal = function(callback) {
     	console.log('Saving to appCache');
-    	if (!Modernizr.localstorage || !Modernizr.applicationcache ) { if (callback) callback(); return false; }
+    	//if (!Modernizr.localstorage || !Modernizr.applicationcache ) { if (callback) callback(); return false; }
     	localStorage[APPLICATION_NAME] = self.toJSON();
     	if (callback) callback();
         return true;
