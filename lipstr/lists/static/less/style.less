@@ -1,4 +1,4 @@
-@import "normalize.less";
+@import "mixins.less";
 
 
 /* ===== Primary Styles ========================================================
@@ -15,11 +15,7 @@
 /*@highlight: rgba(255, 255, 255, 0.4); // doesn't render well in firefox - 78f4ff*/
 @highlight: #a3dded;
 
-.box-shadow(@values) {
-    -moz-box-shadow: @values;
-    -webkit-box-shadow: @values;
-    box-shadow: @values;
-}
+
 
 input::-webkit-input-placeholder {
     color:    #aaa;
@@ -28,29 +24,7 @@ input:-moz-placeholder {
     color:    #aaa;
 }
 
-.transform(@value) {
-	transform: @value;
-	-ms-transform: @value; /* IE 9 */
-	-moz-transform: @value; /* Firefox */
-	-webkit-transform: @value; /* Safari and Chrome */
-	-o-transform: @value; /* Opera */
-}
 
-.border-radius(@value) {
-	-webkit-border-radius: @value;
-	-moz-border-radius: @value;
-	border-radius: @value;
-}
-
-.default-box-shadow {
-    .box-shadow(hsla(0, 0%, 0%, 0.4) 0px 1px 3px);	
-}
-	
-.text-shadow(@values) {
-    -moz-text-shadow: @values;
-    -webkit-text-shadow: @values;
-    text-shadow: @values;
-}
 
 @duration1: 0.25s;
 .transition {
@@ -65,15 +39,6 @@ input:-moz-placeholder {
     -webkit-transition: @values;
     -moz-transition: @values;
     -o-transition: @values;
-}
-
-.button-gradient(@opacity) {
-    background: -moz-linear-gradient(top,  rgba(0,0,0,0) 0%, rgba(0,0,0,@opacity) 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,@opacity))); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,@opacity) 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,@opacity) 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,@opacity) 100%); /* IE10+ */
-    background: linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,@opacity) 100%); /* W3C */
 }
 
 
@@ -142,93 +107,6 @@ li { list-style-type: none;}
 	max-height: 22px;	
 }
 
-header {
-	@header_height: 36px;
-	
-    background-image: url(../img/header-bg-highlight.png);
-	background-repeat: repeat-x;
-	background-position: 0 14px;
-    height: @header_height;
-    width: 100%;
-    background-color: @blue;
-    position: fixed;
-    top: 0;
-    box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 3px;
-    border-bottom: 1px solid @blueborder;
-    z-index: 200;
-    
-    #header-content {
-        width: 100%;
-        height: 100%;
-        
-        #logo-header {
-	        width: 141px;
-	        display: block;
-	        height: 100%;
-	        background-image: url('../img/logo-header.png');
-	        background-repeat: no-repeat;
-	        background-position: 0 1px;
-	        //cursor: pointer;
-	        float: left;
-	        margin-left: 20px;
-        }
-    
-        #menu {
-            @padding_triangle: 17px;
-        
-            height: 100%;
-            float: right;
-            color: #36687a;
-            margin-right: 20px;
-            
-            #username {
-                float: right;
-                height: @header_height + 1;
-                line-height: 40px;
-                background-image: url(../img/menu-triangle.png);
-                background-repeat: no-repeat;
-                background-position: 100% 63%;
-                padding: 0 @padding_triangle 0 8px;
-                text-shadow: 0px 1px 0px @highlight;
-                
-                &:hover {
-	                background-color: rgba(255, 255, 255, 0.22);
-	                .transitionvalues(background-color 0.2s);
-	                cursor: pointer;
-                }
-                
-                img.profile_icon {
-                    vertical-align: text-bottom;
-                    padding-right: 3px;
-                }
-            }
-            
-            #menu-dropdown {
-                display: none;
-                
-                clear: left;
-                background-color: white;
-                margin-top: @header_height + 1;
-                margin-right: -1px;
-                border-bottom: 1px solid #c9c9c9;
-                border-left: 1px solid #c9c9c9;
-                border-right: 1px solid #c9c9c9;
-                box-shadow: rgba(35, 26, 26, 0.4) 0px 1px 3px -1px;
-                
-                &.active { display: block; }
-                
-                li {
-                    a { display: inline-block; padding: 2px 4px; width: 120px; color: @mediumgrey;
-                     &:hover { color: @mediumgrey; }
-                    }
-                    &:hover { background-color: #ececec; }
-                }
-            }
-        }        
-    }
-    
-
-}
 
 /* --- forms --- */
 .form-error { 
@@ -481,7 +359,7 @@ input[type="text"], input[type="password"] {
 	width: @width;
 	margin-left: -@width/2;
 	
-	input[type="text"] { 
+	textarea { 
 	   width: 99%;
 	}
 	
@@ -522,6 +400,8 @@ input[type="text"], input[type="password"] {
             
             .sp-dd {
                 height: 11px; line-height: 11px; padding: 1px 0;
+                margin-top: -1em;
+                padding: 1px 0 0 18px;
             }
                
         }
@@ -548,7 +428,7 @@ button.sp-choose { .button3d-thin; }
     width: 100%;
     /*max-width: 400px;*/
     /*height: 300px;*/
-    margin: 50px auto 0 auto;
+    margin: 65px auto 0 auto;
     
     > ul {
         margin: 0 auto;
@@ -785,6 +665,4 @@ li.list {
     }
 }
 
-
-@import "media-queries.less";
-@import "print.less";
+@import "header.less";

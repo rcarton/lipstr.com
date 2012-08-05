@@ -14,19 +14,38 @@ from lists.models import *
 from lists.views import create_account
 import time
 
-
-
-class ListTest(TestCase):
-    
-    def setUp(self):
-        pass
-    
-class ActionTest(TestCase):
-    
+class UserProfileTest(TestCase):
     usertest = None
     
     def setUp(self):
         self.get_user().save()
+        
+    def get_user(self):
+        if not UserProfileTest.usertest:
+            UserProfileTest.usertest = User()
+            UserProfileTest.usertest.username = 'userprofiletester'
+            UserProfileTest.usertest.set_password('userprofiletester')
+            UserProfileTest.usertest.save()
+        return UserProfileTest.usertest
+    
+    def test_get_board(self):
+        user = self.get_user()
+        pass
+
+    
+class ListTest(TestCase):
+    
+    def setUp(self):
+        pass
+
+class ActionTest(TestCase):
+    
+    usertest = None
+    defaultBoard = None
+    
+    def setUp(self):
+        self.get_user().save()
+        ActionTest.defaultBoard = self.create_board('default', '12345')
     
     # ---- helpers ----
     def get_user(self):
@@ -37,14 +56,28 @@ class ActionTest(TestCase):
             ActionTest.usertest.save()
         return ActionTest.usertest
         
-    def create_list(self, user=None):
+    def create_board(self, title, boardId):
+        """Creates a board."""
+        user = self.get_user()
+        action = {
+                  'type': 'add_board',
+                  'what': {
+                           'id': boardId,
+                           'title': title,
+                           }
+                  }
+        return actions.add_board(action, user)
+    
+    def create_list(self, boardId=None, user=None):
         """Creates a list and returns the _id of that list."""
         
         user = user or self.get_user()
+        boardId = boardId or ActionTest.defaultBoard.id
         
         title = 'title'
         action = {
                   'listId': 'tmp_id',
+                  'boardId': boardId,
                   'type': 'add_list',
                   'what': {
                            'title': title,
@@ -52,14 +85,14 @@ class ActionTest(TestCase):
                            }
                   }
         
-        list = actions.add_list(action, user)    # Returns the id
-        return list
+        mylist = actions.add_list(action, user)    # Returns the id
+        return mylist
     
     def add_task(self, list, description=None, id=None, user=None):
         """Adds a task to the given list."""
         from utils import get_random_string
         
-        id = id or get_random_string(8)
+        lid = id or get_random_string(8)
         description = description or 'this is my task description'
         position = int(time.time()) # we use a timestamp in the js (for now)
         
@@ -67,13 +100,13 @@ class ActionTest(TestCase):
                   'type': 'add_task',
                   'listId': list.id,
                   'what': {
-                           'id': id,
+                           'id': lid,
                            'description': description,
                            'position': position,
                            },
                   }
         actions.add_task(action, user or self.get_user())
-        return id
+        return lid
     
     # ----
     
@@ -85,6 +118,7 @@ class ActionTest(TestCase):
         action = {
                   'listId': 'tmp_id',
                   'type': 'add_list',
+                  'boardId': ActionTest.defaultBoard.id,
                   'what': {
                            'title': title,
                            'color': '#123456'
@@ -99,6 +133,7 @@ class ActionTest(TestCase):
         title = 'title'
         action = {
                   'listId': 'tmp_id',
+                  'boardId': ActionTest.defaultBoard.id,
                   'type': 'add_list',
                   'what': {
                            'title': title,
@@ -115,10 +150,13 @@ class ActionTest(TestCase):
         self.assertTrue(len(ll) > 1)
         
     def test_rem_list(self):
+        board = self.create_board('rem_list', 'rem_list')
         list = self.create_list()
+        user = self.get_user()
         
         self.assertEquals(list.id, List.objects.get(id=list.id).id)
         action = {
+                  'boardID': board.id,
                   'type': 'rem_list',
                   'listId': list.id
                   }
@@ -127,6 +165,9 @@ class ActionTest(TestCase):
             List.objects.get(id=list.id)
         except List.DoesNotExist:
             pass
+        
+        # the list has been removed from the board
+        self.assertEquals(0, len(user.get_profile().boards[0].lists))
         
     def test_add_task(self):      
         list = self.create_list()
@@ -210,7 +251,27 @@ class ActionTest(TestCase):
         except InsufficientPermissions:
             pass
         
-            
+    def test_add_board(self):
+        user = self.get_user()
+        
+        how_many_boards = len(user.get_profile().boards)
+        id = '123456'
+        title = 'boardie'
+        action = {
+                  'type': 'add_board',
+                  'what': {
+                           'id': id,
+                           'title': title,
+                           }
+                  }
+        board = actions.add_board(action, user)
+        self.assertEquals(id, board.id)
+        
+        self.assertTrue(len(user.get_profile().boards) == how_many_boards + 1)
+        
+    def test_rem_board(self):
+        self.assertFalse(True) # TEST IT
+        
     def test_process_actions_create_list(self):
         pass
 

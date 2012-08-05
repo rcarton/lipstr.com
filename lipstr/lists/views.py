@@ -15,10 +15,10 @@ from lists.models import List
 def home(request):
     """Home page."""
     
-    # If user is not authenticated, redirect to authentication 
+    # Get the user boards
+    boards = request.user.get_profile().boards
     
-    # else render his lists
-    return render_to_response('home.html', RequestContext(request, {}))
+    return render_to_response('home.html', RequestContext(request, {'boards': boards}))
 
 
 def login(request):
@@ -95,6 +95,7 @@ def list(request):
         lists = [l.to_obj() for l in List.get_lists_for_user(request.user)]
     
     return HttpResponse(content_type='application/json', content=simplejson.dumps(lists))
+
     
 def signup(request):
     

@@ -13,11 +13,12 @@ Action structure:
     {
         'type':    <action type>,
         'what':    <action data>,
-        'listId': <list id>
+        'listId': <list id>,
+        'boardId': <board id>
     }
 
 """
-from lists.models import Item, List
+from lists.models import Item, List, Board
 
 class ActionDoesNotExist(Exception): pass
 
@@ -78,6 +79,7 @@ def add_list(action, user):
     {
         'type': 'add_list',
         'listId': <list temporary id>,
+        'boardId': <board id>,
         'what': <list>
     }
     
@@ -87,6 +89,10 @@ def add_list(action, user):
     This temporary id must be replaced by the new id used in the database.
     """
     
+    userprofile = user.get_profile()
+    
+    board = userprofile.get_board(action['boardId'])
+    
     # Create the list
     l = List()
     l.title = action['what']['title']
@@ -95,8 +101,8 @@ def add_list(action, user):
     l.save()
     
     # Add the list to the user's lists
-    userprofile = user.get_profile()
-    userprofile.lists.append(l.id)
+    
+    board.lists.append(l.id)
     userprofile.save()
     
     return l;
@@ -109,6 +115,7 @@ def rem_list(action, user):
     {
         'type': 'rem_list',
         'listId': <list id>
+        'boardId': <board id>
     }
     """
     
@@ -119,10 +126,11 @@ def rem_list(action, user):
         
         # Add the list to the user's lists
         userprofile = user.get_profile()
-        userprofile.lists.remove(action['listId'])
+        board = userprofile.get_board(action['boardId'])
+        board.lists.remove(action['listId'])
         userprofile.save()
     except:
-        # the list doesn't exist.
+        # the list or the board doesn't exist.
         pass
     
 def edit_list(action, user):
@@ -186,6 +194,54 @@ def edit_item(action, user):
     
     return l
 
+
+
+def add_board(action, user):
+    """
+    Adds a board.
+    
+    {
+        'type': 'add_board',
+        'boardId': <board id>
+    }
+    
+    """
+    
+    userprofile = user.get_profile()
+    
+    board = Board()
+    board.title = action['what']['title']
+    board.id = action['what']['id']
+    userprofile.boards.append(board)
+    userprofile.save()
+    
+    return board;
+
+def rem_board(action, user):
+    """
+    Adds a board.
+    
+    {
+        'type': 'rem_board',
+        'what': {
+                    id: <board id>
+                }
+    }
+    
+    """
+    
+    userprofile = user.get_profile()
+    
+
+
+    try:
+        board = userprofile.get_board(action['boardId'])
+        userprofile.boards.remove(board)
+        userprofile.save()
+    except Board.DoesNotExist:
+        return
+
+
 def process_actions(actions, user):
     """
     Processes the actions.
@@ -200,6 +256,7 @@ def process_actions(actions, user):
                'rem_list': rem_list,
                'edit_list': edit_list,
                'edit_item': edit_item,
+               'add_board': add_board,
                }
     
     #TODO: handle errors

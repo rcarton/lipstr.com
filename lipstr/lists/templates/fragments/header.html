@@ -1,0 +1,75 @@
+<div class="navbar">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <a class="brand" href="http://lipstr.com">lipstr</a>
+        <div class="nav-collapse">
+          <ul class="nav">
+            {% for board in boards %}
+              <li {% if forloop.first %}class="active"{% endif %}><a href="#">{{ board.title|lower }}</a></li>
+            {% endfor %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li class="nav-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+          
+          <ul class="nav pull-right">
+            <li><a href="#">Link</a></li>
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="profile_icon" src="{{ user.get_profile.get_icon_url }}"> {% if user.first_name %}{{user.first_name|capfirst}}{% else %}{{user.username}}{% endif %}<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url preferences %}">Preferences</a></li>
+                <li class="divider"></li>
+                <li><a href="{% url disconnect %}">Sign out</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div>
+    </div><!-- /navbar-inner -->
+  </div>
+  
+{% comment old menu %}
+<div id="header">
+
+    {# <a id="logo-header" href="/"> </a>#}
+        
+    <div id="bar-menu">
+        <ul>
+            {% for board in boards %}
+                <li {% if forloop.first %}class="active"{% endif %}>{{ board.title|lower }}</li>
+            {% endfor %}
+        </ul>
+        
+        <div id="bar-menu-actions">
+            + Add
+        </div>
+    </div>
+    
+    <div id="user-menu">
+        
+        {# <img class="profile_icon" src="{{ user.get_profile.get_icon_url }}"> #}
+        
+        <ul>
+           <li>{% if user.first_name %}{{user.first_name|capfirst}}{% else %}{{user.username}}{% endif %} </li>
+           <li> <a href="{% url preferences %}">Preferences</a></li>
+           <li> <a href="{% url disconnect %}">Sign out</a></li>
+        </ul>
+        
+    </div>
+</div>
+{% endcomment %}

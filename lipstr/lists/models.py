@@ -71,6 +71,7 @@ class Board(models.Model):
     
     @classmethod
     def migrate_users_to_board(cls):
+        """Not needed anymore, it was to move the lists to boards."""
         
         # For each user, move the lists to a new board called 'home'
         for u in User.objects.all():
@@ -86,6 +87,9 @@ class Board(models.Model):
             
             userprofile.boards.append(board)
             userprofile.save()
+    
+    def save(self):
+        raise RuntimeError('this model should not be saved, save the user profile.')
         
              
 class Item(models.Model):
@@ -108,7 +112,7 @@ class Item(models.Model):
     
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    icon = models.CharField(max_length=250, default='')
+    icon = models.CharField(max_length=250, default='', null=True)
     boards = ListField(EmbeddedModelField('Board'))
     
     # Deprecated do not use - will be removed once the migration is done for all users
@@ -128,6 +132,11 @@ class UserProfile(models.Model):
             icon_url += urllib.urlencode({'d':default, 's':str(size)})
 
         return icon_url
+    
+    def get_board(self, board_id):
+        for b in self.boards:
+            if b.id == board_id: return b
+        raise Board.DoesNotExist()
     
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

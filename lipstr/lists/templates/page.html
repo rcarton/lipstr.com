@@ -1,51 +1,13 @@
 {% extends "base.html" %}
 
 {% block header %}
-<header>
-    <div id="header-content">
-        <a id="logo-header" href="/"> </a>
-        <div id="menu">
-            
-            <div id="username">
-                <img class="profile_icon" src="{{ user.get_profile.get_icon_url }}">
-                {% if user.first_name %}{{user.first_name|capfirst}}{% else %}{{user.username}}{% endif %}
-            </div>
-           
-            <ul id="menu-dropdown">
-                <li><a href="{% url preferences %}">Preferences</a></li>
-                <li><a href="{% url disconnect %}">Sign out</a></li>
-            </ul>
-            
-        </div>
-    </div>
-</header>
+
+{% include "fragments/header.html" %}
+
 {% endblock %}
 
 {% block template-custom-js %}
 <script src="{{STATIC_URL}}js/libs/jquery-ui-1.8.18.bounce.min.js"></script>
-<script>
-$(document).ready(function() {
-    
-    var menudd = $('#menu-dropdown');
-    
-    // menu
-    $('#username').click(function(e) {
-        if (!menudd.hasClass('active')) menudd.addClass('active');
-        else { menudd.removeClass('active'); }
-        e.stopPropagation();
-    });
-    
-    $(document).click(function() {
-        menudd.removeClass('active');
-        
-        // remove li-menu-dropdown and mask
-        $('.li-menu-dropdown').hide();
-        $('.mask').remove();
-        
-    });
-    
-});
-</script>
 
 {% endblock %}
 
