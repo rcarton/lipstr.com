@@ -202,7 +202,10 @@ def add_board(action, user):
     
     {
         'type': 'add_board',
-        'boardId': <board id>
+        'what': {
+            title: <board title>,
+            id: <board id>
+        }
     }
     
     """
@@ -215,7 +218,6 @@ def add_board(action, user):
     userprofile.boards.append(board)
     userprofile.save()
     
-    return board;
 
 def rem_board(action, user):
     """
@@ -236,6 +238,11 @@ def rem_board(action, user):
 
     try:
         board = userprofile.get_board(action['boardId'])
+        
+        for l in List.objects.filter(id__in=board.lists):
+            l.remove()
+        
+        
         userprofile.boards.remove(board)
         userprofile.save()
     except Board.DoesNotExist:
@@ -257,6 +264,7 @@ def process_actions(actions, user):
                'edit_list': edit_list,
                'edit_item': edit_item,
                'add_board': add_board,
+               'rem_board': rem_board,
                }
     
     #TODO: handle errors

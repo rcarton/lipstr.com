@@ -92,7 +92,12 @@ def list(request):
     if l:
         lists = [li.to_obj() for li in List.get_lists_for_user(request.user) and li.id in l]
     else:
-        lists = [l.to_obj() for l in List.get_lists_for_user(request.user)]
+        # Get the board to retrieve
+        b = request.GET.get('b', None)
+        
+        lists = [l.to_obj() for l in List.get_lists_for_user(request.user, b)]
+    
+    
     
     return HttpResponse(content_type='application/json', content=simplejson.dumps(lists))
 

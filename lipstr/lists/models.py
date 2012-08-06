@@ -29,17 +29,17 @@ class List(models.Model):
         return simplejson.dumps(self.to_obj())    
     
     @classmethod
-    def get_lists_for_user(cls, user, board_title=None):
+    def get_lists_for_user(cls, user, board_id=None):
         userprofile = user.get_profile()
         
         b = None
         
         # if no board name is specified, get the first
-        if board_title == None:
+        if board_id == None:
             b = userprofile.boards[0]
         else:
             for tmp_board in userprofile.boards:
-                if tmp_board.title == board_title:
+                if tmp_board.id == board_id:
                     b = tmp_board
         
         if b == None:

@@ -6,8 +6,26 @@
 
 {% endblock %}
 
+
+{% block custom-js %}
+<script src="{{STATIC_URL}}js/ko.bindings.js"></script>
+<script src="{{STATIC_URL}}js/listdnd.js"></script>
+<script src="{{STATIC_URL}}js/list.js"></script>
+<script src="{{STATIC_URL}}js/libs/spectrum.js"></script>
+
+<script>
+    {% for board in user.get_profile.boards %}
+    TaskListViewModel.instance.boards.push(new Board('{{board.id}}','{{board.title}}'));
+    {% endfor %}
+    
+    TaskListViewModel.instance.currentBoard = TaskListViewModel.instance.boards()[0].id;
+</script>
+{% endblock %}
+
+
 {% block template-custom-js %}
 <script src="{{STATIC_URL}}js/libs/jquery-ui-1.8.18.bounce.min.js"></script>
-
 {% endblock %}
+
+
 

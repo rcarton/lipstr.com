@@ -95,6 +95,8 @@ function reloadMasonry() {
  *  - add_list
  *  - rem_list 
  *  - edit_list
+ *  - add_board
+ *  - rem_board
  * 
  */
 function Action(type, what, listId) {
@@ -102,14 +104,16 @@ function Action(type, what, listId) {
 	self.type = type;
 	self.what = what
 	self.listId = listId
+	var boardId = TaskListViewModel.instance.currentBoard;
 	
 	self.toObj = function() {
-		return {type: self.type, what: self.what, listId: self.listId};
+		return {type: self.type, what: self.what, listId: self.listId, boardId: boardId};
 	}
 	self.toJSON = function() {
 		return ko.toJSON(self.toObj());
 	}
 }
+
 /**
  * Builders
  */
@@ -144,6 +148,9 @@ Action.getEditListAction = function(list, attributes) {
 		
 	return new Action('edit_list', o, list.id); 
 }
+
+//add_board {type: 'add_board', what: {<attribute>: <new value>}}
+Action.getAddBoardAction = function(id, title) { return new Action('add_board', {id: id, title: title}); }
 
 function Task(id, description, position, crossed) {
 	var self = this;
@@ -401,7 +408,32 @@ TaskList.toggleLiMenu = function(data, e) {
 	$(mask).fadeIn(200);
 }
 
-
+function Board(id, title) {
+	var self = this;
+	self.id = id;
+	self.title = ko.observable(title);
+}
+Board.addBoard = function() {
+	var title = prompt('Give a title to your board');
+	
+	// Error cases
+	if (title == null || title == '') return;
+	
+	var id = getRandomId();
+	var board = new Board(id, title);
+	
+	var tlm = TaskListViewModel.instance;
+	tlm.actions.push(Action.getAddBoardAction(id, title).toObj());
+	
+	tlm.boards.push(board);
+	
+	if (isOnline()) {
+		tlm.synchronizeLists(function() { tl.focus(); });
+	} else {
+		self.saveLocal();
+		tlm.focus();
+	}
+}
 
 function TaskListViewModel(id) {
 	
@@ -411,6 +443,7 @@ function TaskListViewModel(id) {
 	self.actions = new Array();
 	self.menu = ko.observable();
 	self.currentBoard = null;
+	self.boards = ko.observableArray([]);
 	
 	var delayedSynchronizeTimer;
 	
@@ -424,16 +457,14 @@ function TaskListViewModel(id) {
     
 	self.addTaskList = function() {
 		
-		value = prompt('Give a title to your list');
+		var value = prompt('Give a title to your list');
     	
     	// Error cases
     	if (value == null || value == '') return;
     	
 		var tl = TaskList.getTaskList(value);
 		self.tasklists.push(tl);
-		self.actions.push(Action.getAddTaskListAction(tl).toObj());
-		
-		// Clear the field
+		self.actions.push(Action.getAddTaskListAction(tl, self.currentBoard).toObj());
 
 		if (isOnline()) {
     		self.synchronizeLists(function() { tl.focus(); });
@@ -548,6 +579,12 @@ function TaskListViewModel(id) {
     	self.synchronizeOrSave();
     }
     
+    self.switchBoard = function(boardId) {
+    	self.currentBoard = boardId;
+    	self.tasklists.removeAll();
+    	self.synchronizeLists();
+    }
+    
     self.toJSON = function() {
     	// Ok that's not very readable, but it makes a nice json array called data out of the tasklists.
     	return ko.toJSON({ 
@@ -589,9 +626,11 @@ function TaskListViewModel(id) {
 	self.getLists = function(callback) {
 		
 		console.log("Retrieving list");
+		var data = {};
+		if (self.currentBoard) data['b'] = self.currentBoard;
 		
     	// Retrieve the latest list of tasklists from the server
-		$.get('/list', {}, function(data){ 
+		$.get('/list', data, function(data){ 
 			self.updateListsFromResponse(data, callback);
 		});	
 	};
