@@ -286,8 +286,10 @@
             }
 
             var paletteEvent = IE ? "mousedown.spectrum" : "click.spectrum touchstart.spectrum";
+
             paletteContainer.delegate("span", paletteEvent, palletElementClick);
             initialColorContainer.delegate("span::nth-child(1)", paletteEvent, { ignore: true }, palletElementClick);
+            
         }
         function addColorToSelectionPalette(color) {
             if (showSelectionPalette) {

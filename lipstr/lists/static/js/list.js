@@ -92,19 +92,21 @@ function reloadMasonry() {
  * action types:
  * 	- add_task
  *  - rem_task
+ *  - edit_item
  *  - add_list
  *  - rem_list 
  *  - edit_list
  *  - add_board
+ *  - edit_board
  *  - rem_board
  * 
  */
-function Action(type, what, listId) {
+function Action(type, what, listId, boardId) {
 	var self = this;
 	self.type = type;
 	self.what = what
 	self.listId = listId
-	var boardId = TaskListViewModel.instance.currentBoard;
+	self.boardId = boardId?boardId:TaskListViewModel.instance.currentBoard();
 	
 	self.toObj = function() {
 		return {type: self.type, what: self.what, listId: self.listId, boardId: boardId};
@@ -151,6 +153,16 @@ Action.getEditListAction = function(list, attributes) {
 
 //add_board {type: 'add_board', what: {<attribute>: <new value>}}
 Action.getAddBoardAction = function(id, title) { return new Action('add_board', {id: id, title: title}); }
+Action.getRemBoardAction = function(id) { return new Action('rem_board', {}, '', id); }
+Action.getEditBoardAction = function(board, attributes) { 
+	var o = {};
+	for (k in attributes) {
+		o[k] = attributes[k];
+	}
+		
+	return new Action('edit_board', o, '', board.id); 
+}
+
 
 function Task(id, description, position, crossed) {
 	var self = this;
@@ -412,7 +424,48 @@ function Board(id, title) {
 	var self = this;
 	self.id = id;
 	self.title = ko.observable(title);
+	
+	self.titleDisplayed = ko.computed(function() {
+        return self.title() + '<b class=\"caret\"></b>';
+    }, this);
+	
+	self.renameBoard = function() {
+		var value = prompt('Give a new name to your board');
+    	
+    	// Error cases
+    	if (value == null || value == '') return;
+    	
+    	self.title(value);
+    	
+    	var tlm = TaskListViewModel.instance;
+		tlm.actions.push(Action.getEditBoardAction(self, {title: self.title()}).toObj());
+		tlm.synchronizeOrSave();
+
+	}
+	
+	self.deleteBoard = function() { 
+		// Confirmation
+		if (!confirm("Are you sure you want to remove the board '" + self.title() + "'?")) return;
+		var tlm = TaskListViewModel.instance;
+		
+		// If it's the last board don't remove it (todo: default thing to display when there is no board?)
+		if (tlm.boards().length == 1) {
+			alert("You can't remove your last board (yet, I need to put something in place).");
+			return;
+		}
+		
+		// Remove from the list of boards
+		tlm.boards.remove(self);
+		
+		// Select the first board
+		tlm.switchBoard(tlm.boards()[0].id);
+		
+		tlm.actions.push(Action.getRemBoardAction(self.id).toObj());
+		tlm.synchronizeOrSave();
+	}
+
 }
+
 Board.addBoard = function() {
 	var title = prompt('Give a title to your board');
 	
@@ -427,13 +480,11 @@ Board.addBoard = function() {
 	
 	tlm.boards.push(board);
 	
-	if (isOnline()) {
-		tlm.synchronizeLists(function() { tl.focus(); });
-	} else {
-		self.saveLocal();
-		tlm.focus();
-	}
+	// switchBoard synchronizes, no need to call it again
+	tlm.switchBoard(board.id);
 }
+
+
 
 function TaskListViewModel(id) {
 	
@@ -442,7 +493,7 @@ function TaskListViewModel(id) {
 	self.tasklists = ko.observableArray([]);
 	self.actions = new Array();
 	self.menu = ko.observable();
-	self.currentBoard = null;
+	self.currentBoard = ko.observable();
 	self.boards = ko.observableArray([]);
 	
 	var delayedSynchronizeTimer;
@@ -450,10 +501,10 @@ function TaskListViewModel(id) {
 	initMasonry();
 	
 	
-	
 	// Methods
 	self.hasAppCache = function() { return (Modernizr.localstorage && Modernizr.applicationcache && localStorage[APPLICATION_NAME] != undefined); }
 	//self.hasAppCache = function() { return (localStorage[APPLICATION_NAME] != undefined); }
+	
     
 	self.addTaskList = function() {
 		
@@ -464,7 +515,7 @@ function TaskListViewModel(id) {
     	
 		var tl = TaskList.getTaskList(value);
 		self.tasklists.push(tl);
-		self.actions.push(Action.getAddTaskListAction(tl, self.currentBoard).toObj());
+		self.actions.push(Action.getAddTaskListAction(tl, self.currentBoard()).toObj());
 
 		if (isOnline()) {
     		self.synchronizeLists(function() { tl.focus(); });
@@ -580,7 +631,7 @@ function TaskListViewModel(id) {
     }
     
     self.switchBoard = function(boardId) {
-    	self.currentBoard = boardId;
+    	self.currentBoard(boardId);
     	self.tasklists.removeAll();
     	self.synchronizeLists();
     }
@@ -627,7 +678,7 @@ function TaskListViewModel(id) {
 		
 		console.log("Retrieving list");
 		var data = {};
-		if (self.currentBoard) data['b'] = self.currentBoard;
+		if (self.currentBoard()) data['b'] = self.currentBoard();
 		
     	// Retrieve the latest list of tasklists from the server
 		$.get('/list', data, function(data){ 

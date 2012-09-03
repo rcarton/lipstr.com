@@ -7,11 +7,32 @@
           <span class="icon-bar"></span>
         </a>
         <a class="brand" href="http://lipstr.com">lipstr</a>
+        
         <div class="nav-collapse">
-          <ul data-bind="foreach: boards" id="board-list" class="nav">
-              <li><a href="#" data-bind="text: title(), attr: {'data-board-id': id}, click: function() { console.log('robert'); $root.switchBoard(id); }"></a></li>
+          <ul data-bind="foreach: boards" id="board-list" class="nav nav-pills">
+          
+              <!-- Active or not -->
+              <!-- ko if: $root.currentBoard()==id -->
+              <li data-bind="attr: {class: 'active dropdown'}, template: { name: 'board-menu-item-template', data: $data }">
+                
+              </li>
+              <!-- /ko -->
+              
+              <!-- ko if: $root.currentBoard()!=id -->
+              <li data-bind="attr: {class: ''}">
+                <a href="#" data-bind="text: title(), attr: {'data-board-id': id}, click: function() { $root.switchBoard(id); }"></a>
+              </li>
+              <!-- /ko -->
+              
           </ul>
           
+          <script type="text/html" id="board-menu-item-template">
+            <a data-bind="html: titleDisplayed, attr: {'data-board-id': id, class: 'dropdown-toggle', 'id': 'board-' + id}, enableBootstrapDropdown: {}"></a>
+                <ul class="dropdown-menu">
+                    <li><a data-bind="text: 'Rename board', click: renameBoard"></a></li>
+                    <li><a data-bind="text: 'Delete board', click: deleteBoard"></a></li>
+                </ul>
+          </script>
           
           <ul class="nav pull-right">
                         <li class="dropdown">
@@ -68,3 +89,4 @@
     </div>
 </div>
 {% endcomment %}
+

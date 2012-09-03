@@ -167,7 +167,7 @@ class ActionTest(TestCase):
             pass
         
         # the list has been removed from the board
-        self.assertEquals(0, len(user.get_profile().boards[0].lists))
+        self.assertEquals(0, len(user.get_profile().get_board(board.id).lists))
         
     def test_add_task(self):      
         list = self.create_list()
@@ -270,7 +270,45 @@ class ActionTest(TestCase):
         self.assertTrue(len(user.get_profile().boards) == how_many_boards + 1)
         
     def test_rem_board(self):
-        self.assertFalse(True) # TEST IT
+        user = self.get_user()
+        board = self.create_board('test_rem_board', 'test_rem_board')
+        action = {
+                  'type': 'rem_board',
+                  'boardId': 'test_rem_board',
+                  }
+        
+        list = self.create_list(boardId=board.id)
+        
+        self.assertEqual(1, len(user.get_profile().get_board(action['boardId']).lists))
+        actions.rem_board(action, user)
+        
+        try:
+            board2 = user.get_profile().get_board(action['boardId'])
+            self.fail()
+        except Board.DoesNotExist:
+            pass
+        
+        try:
+            List.objects.get(id=list.id)
+            self.fail()
+        except List.DoesNotExist:
+            pass
+        
+    def test_edit_board(self):
+        user = self.get_user()
+        board = self.create_board('test_edit_board', 'test_edit_board')
+        action = {
+                  'type': 'edit_board',
+                  'boardId': 'test_edit_board',
+                  'what': {
+                           'title': 'new_title',
+                           }
+                  }
+        
+        actions.edit_board(action, user)
+        
+        board2 = user.get_profile().get_board(action['boardId'])
+        self.assertEqual('new_title', board2.title)
         
     def test_process_actions_create_list(self):
         pass

@@ -18,7 +18,7 @@
     TaskListViewModel.instance.boards.push(new Board('{{board.id}}','{{board.title}}'));
     {% endfor %}
     
-    TaskListViewModel.instance.currentBoard = TaskListViewModel.instance.boards()[0].id;
+    TaskListViewModel.instance.currentBoard(TaskListViewModel.instance.boards()[0].id);
 </script>
 {% endblock %}
 

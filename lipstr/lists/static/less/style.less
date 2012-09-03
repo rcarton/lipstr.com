@@ -1,21 +1,10 @@
+@import "colors.less";
 @import "mixins.less";
-
 
 /* ===== Primary Styles ========================================================
    Author: rcarton / troebr.net
    
    ========================================================================== */
-
-/* ---- colors ---- */
-@grey1: #2e2e2e;
-@greyborder: #e8e8e8;
-@mediumgrey: #4a4a4a;
-@blue: #60b9da;
-@blueborder: #5ba3bc;
-/*@highlight: rgba(255, 255, 255, 0.4); // doesn't render well in firefox - 78f4ff*/
-@highlight: #a3dded;
-
-
 
 input::-webkit-input-placeholder {
     color:    #aaa;
@@ -428,7 +417,7 @@ button.sp-choose { .button3d-thin; }
     width: 100%;
     /*max-width: 400px;*/
     /*height: 300px;*/
-    margin: 65px auto 0 auto;
+    margin: 0 auto 0 auto;
     
     > ul {
         margin: 0 auto;
@@ -577,22 +566,6 @@ li.list {
         background-color: transparent;
     }
 }
-
-#bottom-menu {
-    width: 72px;
-	margin: 3em auto 0 auto;
-	border-radius: 11px;
-	padding: 11px;
-	text-align: center;
-	box-shadow: inset rgba(0, 0, 0, 0.2) 0px 2px 2px 0px;	
-	
-	.button3d {
-        height: 30px;
-        display: inline-block;
-        &:active { height: 28px; margin-bottom: -3px; padding-top: 1px;}
-    }
-}
-
 
 #page-content {
 	padding-top: 60px;

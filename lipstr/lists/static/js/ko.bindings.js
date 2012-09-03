@@ -42,3 +42,11 @@ ko.bindingHandlers.taskClick = {
 			// Update the DOM element based on the supplied values here.
 		}	
 };
+
+ko.bindingHandlers.enableBootstrapDropdown = {
+		init:  function(element, valueAccessor, allBindingsAccessor, context) {
+			$(element).dropdown();
+		},
+	    update: function(element, valueAccessor, allBindingAccessor, context) {
+	    }  
+	}

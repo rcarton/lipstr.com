@@ -218,6 +218,7 @@ def add_board(action, user):
     userprofile.boards.append(board)
     userprofile.save()
     
+    return board
 
 def rem_board(action, user):
     """
@@ -234,20 +235,44 @@ def rem_board(action, user):
     
     userprofile = user.get_profile()
     
-
-
     try:
         board = userprofile.get_board(action['boardId'])
         
         for l in List.objects.filter(id__in=board.lists):
-            l.remove()
-        
-        
+            l.delete()
+            
         userprofile.boards.remove(board)
         userprofile.save()
     except Board.DoesNotExist:
         return
 
+def edit_board(action, user):
+    """
+    Edits a board.
+    {
+        'type': 'edit_board',
+        'boardId': <board id>
+        'what': {
+                    id: <board id>,
+                    <attribute>: <value>
+                }
+    }
+    """
+    userprofile = user.get_profile()
+    
+    try:
+        board = userprofile.get_board(action['boardId'])
+        editable_attributes = ('title', )
+    
+        for key, value in action['what'].iteritems():
+            if key == 'id': continue
+            elif key in editable_attributes:
+                board.__setattr__(key, value)
+                    
+        userprofile.save()
+    except Board.DoesNotExist:
+        return
+    
 
 def process_actions(actions, user):
     """
@@ -265,6 +290,7 @@ def process_actions(actions, user):
                'edit_item': edit_item,
                'add_board': add_board,
                'rem_board': rem_board,
+               'edit_board': edit_board,
                }
     
     #TODO: handle errors
@@ -286,7 +312,7 @@ def process_actions(actions, user):
             continue
         
         # If there's a return value
-        if returned_list: modified_lists[returned_list.id] = returned_list
+        if returned_list and isinstance(returned_list, List): modified_lists[returned_list.id] = returned_list
         
         if action['type'] == 'add_list':
             # Change the temporary id to the new id in all the remaining actions
