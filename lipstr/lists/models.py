@@ -36,7 +36,14 @@ class List(models.Model):
         
         # if no board name is specified, get the first
         if board_id == None:
-            b = userprofile.boards[0]
+            if len(userprofile.boards) == 0:
+                b = Board()
+                b.creator = user
+                b.title = 'home'
+                userprofile.boards.append(b)
+                userprofile.save()
+            else:
+                b = userprofile.boards[0]
         else:
             for tmp_board in userprofile.boards:
                 if tmp_board.id == board_id:

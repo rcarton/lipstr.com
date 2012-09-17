@@ -109,7 +109,7 @@ function Action(type, what, listId, boardId) {
 	self.boardId = boardId?boardId:TaskListViewModel.instance.currentBoard();
 	
 	self.toObj = function() {
-		return {type: self.type, what: self.what, listId: self.listId, boardId: boardId};
+		return {type: self.type, what: self.what, listId: self.listId, boardId: self.boardId};
 	}
 	self.toJSON = function() {
 		return ko.toJSON(self.toObj());
@@ -457,11 +457,12 @@ function Board(id, title) {
 		// Remove from the list of boards
 		tlm.boards.remove(self);
 		
+		tlm.actions.push(Action.getRemBoardAction(self.id).toObj());
+
 		// Select the first board
 		tlm.switchBoard(tlm.boards()[0].id);
 		
-		tlm.actions.push(Action.getRemBoardAction(self.id).toObj());
-		tlm.synchronizeOrSave();
+		// TODO: find out why the lists aren't updated
 	}
 
 }

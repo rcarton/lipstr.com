@@ -14,10 +14,8 @@
 
 {% block body %}
 
+{% block login %}
 <section id="login">    
-    
-    {% block login %}
-    
     <form id="loginform">{% csrf_token %}
         <div id="login-left">
             <input type="text" name="username" placeholder="Email Address">
@@ -37,9 +35,9 @@
         <p>sign up <a href="/signup">here</a> or try the <a href="">anonymous version</a>.</p>
     </div>
     
-    {% endblock %}
     
 </section>
+{% endblock %}
 
 {% endblock %}
 

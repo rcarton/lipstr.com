@@ -68,7 +68,6 @@ def actions(request):
         
         modified_l, id_replacements  = process_actions(actions, request.user)
         
-        #import pdb; pdb.set_trace()
         lists_to_return = [l.to_obj() for l in modified_l.itervalues()]
         
         # Add tmp_id_replacement for new lists -> to replace the temporary ids in the DOM list
@@ -149,8 +148,8 @@ def create_account(signup_form):
     user.email = signup_form['email'].value()
     user.set_password(signup_form['password'].value())
     
-    if signup_form['firstname']: user.first_name = signup_form['firstname'].value()
-    
+    if signup_form['firstname'].value(): user.first_name = signup_form['firstname'].value()
+        
     user.save()
     
     if signup_form['icon']: 
