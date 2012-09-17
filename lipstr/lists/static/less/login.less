@@ -1,0 +1,199 @@
+/* --- login ---- */
+
+#login {
+    
+    .textinset {
+       color: #36687a;
+       text-shadow: 0px 1px 0px @highlight;
+    }
+    
+    .divinset {
+       .border-radius(8px);
+       .box-shadow(inset 0px 1px 2px rgba(50, 50, 50, 0.5));
+    }
+    
+    background-image: url(../img/login-logo.png);  
+    margin: 0 auto;
+    width: 100%;
+    max-width: 600px;
+    padding-top: 180px;
+    background-repeat: no-repeat;    
+    background-position: 47px 22px;
+    background-color: rgba(255, 255, 255, 0.24);
+    border-radius: 6px;
+    padding: 20px 40px;
+    position: absolute;
+    left: 50%;
+    margin-left: -334px;
+    top: 75px;
+    
+    .box-shadow(inset rgba(238, 241, 243, 0.44) 0px 3px 0px -2px);
+    border-bottom: #63A5C4 2px solid;
+    
+    
+    a { font-weight: bold; color: inherit; &:hover { color: darken(#36687a, 15%); .transition; } }
+    p { font-size: 15px; font-family: Arvo, Arial; .textinset; } 
+         
+    form {
+    
+        &#loginform {
+            position: relative;
+            left: 275px;
+            top: 14px;
+        }
+        
+        padding: 1em 0;
+        
+        #login-left {
+           float: left;
+        }
+        
+        label {
+           display: block;
+           width: 190;
+           float: left;
+           .textinset;
+           font-size: 17px;
+           margin: 0 0 0.2em 0.2em;
+           clear: both;
+        }
+        
+        input[type=text], input[type=password] {
+            display: block;
+            width: 190px;
+            float: left;
+            position: relative;
+            left: 0px;
+            margin: 0 0 0.49em 0;
+            border: 1px solid @blueborder;
+            line-height: 21px;
+            clear: both;
+            padding: 2px 0 0 3px;
+            .border-radius(4px);
+            .box-shadow(~"inset hsla(0, 15%, 12%, 0.16) 0px 1px 2px 1px, rgba(255,255,255, 0.4) 0px 1px 0px");
+            
+        }
+        
+        input[type=submit] {
+            .button3d;
+            float: left;
+            margin: 0 0 0 0.25em;
+            font-size: 1.4em;
+            line-height: 39px;
+            padding: 0.5em 0.8em 0.5em 0.8em;
+            display: inline-block;
+            border: 1px solid @blueborder;
+            text-shadow: white 0px 1px 0px;
+        }
+        
+        #forgot-your-password {
+            clear: left;
+            font-size: 0.9em;
+            margin-top: -7px;
+            float: left;
+        }
+        
+    }
+    
+    #or-login-with {
+        float: left;
+        position: relative;
+        left: 275px;
+        top: -10px;
+        padding-right: 95px;
+        
+        #gmail-button {
+            .button3d-thin;
+            float: none;
+            display: block;
+            margin-bottom: 2px;
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            font-weight: normal;
+            font-size: 13px;
+            
+            &:hover { text-decoration: none; }
+            &:before {
+                display: inline-block;
+                height: 16px;
+                width: 22px;
+                content: '';
+                position: relative;
+                left: -4px;
+                top: 3px;
+                background-image: url('../img/gmail-small.png');
+                background-repeat: no-repeat;
+                padding-right: 5px;
+                border-right: 1px solid @button-border-color;
+            }
+            
+        }
+    }
+    
+    #you-dont-have-an-account {
+        clear: both;
+        float: left;
+        position: relative;
+        top: 8px;
+        left: 56%;
+        padding: 0 0 0 0;
+        width: 472px;
+        height: 73px;
+        //background-image: url(../img/youdonthaveanaccount-bg.png);
+        margin-left: -274px;
+        
+        p { position: relative; top: 20px; left: 107px; }
+        p+p { top: 16px; left: 127px; }
+    }
+    
+    
+
+}
+
+
+#login.signup-page {
+    background-position: 50% 22px;
+    padding-top: 180px;
+
+    #signup {
+        padding-top: 23px;
+        border-top: 2px solid rgba(91, 163, 188, 0.41);
+        width: 100%;
+        
+        h2 {
+            font-size: 1.4em;
+            text-align: center;
+            margin: 0.5em 0 1.6em 0;
+            font-family: Arvo, Arial;
+            color: #36687A;
+            text-shadow: rgba(255, 255, 255, 0.56) 0px 1px 0px;
+        }
+        
+        input[type=text], input[type=password] { 
+            width: 52%;
+            font-size: 16px;
+            height: 27px;
+            margin-left: 22%;
+            padding: 5px 4px;
+        }
+        
+        #submit-wrapper { 
+            margin-left: 206px;
+            margin-top: 1em;
+            padding-top: 1em;
+            clear: both; 
+        }
+        
+        
+        input[type=submit] { 
+            height: 30px; 
+            line-height: 30px; 
+            padding: 0 2em;
+            
+            &:active {
+                height: 28px;
+            }
+        }
+    }
+}
