@@ -200,7 +200,7 @@ function handleErrorForm(jForm, errors, direction) {
 			errorDiv.style.top = jErrorField.position().top - 30 + 'px'; 
 		} else {
 			errorDiv.style.left = jErrorField.position().left + jErrorField.width() + 'px'; 
-			errorDiv.style.top = jErrorField.position().top + 'px'; 
+			errorDiv.style.top = jErrorField.position().top + jErrorField.height()/4 + 'px'; 
 		}
 
 		

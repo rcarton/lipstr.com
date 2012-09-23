@@ -56,6 +56,14 @@
         }
     }
     
+    [class^="icon-"], [class*=" icon-"] {
+        padding-right: 4px;
+        vertical-align: sub;
+        opacity: 0.5;
+    }
+    
+    
+    
     .nav {
         .dropdown-menu {
             > li {
@@ -88,13 +96,14 @@
             }
         }
         
+        &.pull-right li {
+            &.open, &:hover {
+                background-color: rgba(243, 240, 240, 0.78);
+            }
+        }
+        
         li {
             &.dropdown {
-                &.open, &:hover {
-                    .dropdown-toggle {
-                        background-color: rgba(243, 240, 240, 0.78);
-                    }
-                }
                 
                 a.dropdown-toggle {
                     padding: 7px 10px 10px;
@@ -111,6 +120,7 @@
             a {
                 color: @navbarcolor;
                 text-shadow: 0 1px 0 rgba(250, 250, 250, 0.63);
+                padding: 8px 10px 9px;
                 
                 &:hover {
                     color: @navbarcolor;

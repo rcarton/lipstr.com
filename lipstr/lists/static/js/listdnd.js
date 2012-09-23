@@ -97,14 +97,14 @@ function ListDND(obj) {
 			// If the placeholder has to be before this block, break
 			if (y < (block.offset().top + block.height()/2)) break;
 			
-			phY = block.offset().top + block.height() + 10;
+			phY = block.offset().top + block.height();
 		}
 		self.destinationCol = col;
 		self.destinationPos = i;
 		
 		var $ph = $('#block-placeholder');
 		
-		$ph.height($(self.obj).height());
+		$ph.height($(self.obj).height() - 4);
 		
 		if (!$ph.length) {
 			// Create the placeholder
@@ -130,7 +130,7 @@ function ListDND(obj) {
 				var block = mason.colBricks[col][i];
 				
 				if (!block.hasClass('after-placeholder')) {
-					block.css('top', block.position().top + phHeight + 'px');
+					block.css('top', block.position().top + phHeight + 8 + 'px');
 					block.addClass('after-placeholder');
 				}
 			}

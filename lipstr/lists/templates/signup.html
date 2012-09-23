@@ -15,9 +15,11 @@
     <form id="signup">{% csrf_token %}
         
         <h2>A new user? Awesome! <br>All you need is an email address and a password to get started</h2>
-    
-        <input type="text" id="email" name="email" placeholder="Email address">
-        <input type="password" id="password" name="password" placeholder="Password">
+        
+        <div class="signup-field-wrapper">
+            <input type="text" id="email" name="email" placeholder="Email address">
+            <input type="password" id="password" name="password" placeholder="Password">
+        </div>
         
         {# <input type="text" id="firstname" name="firstname"> #}
         

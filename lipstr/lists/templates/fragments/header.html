@@ -34,16 +34,22 @@
                 </ul>
           </script>
           
+          
+           
           <ul class="nav pull-right">
-                        <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Add <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="javascript: Board.addBoard();">new board</a></li>
-                <li><a href="javascript: TaskListViewModel.instance.addTaskList();">new list</a></li>
-                {#<li class="divider"></li>#}
-                {#<li class="nav-header">Nav header</li>#}
-              </ul>
-            </li>
+              <li><a href="javascript: TaskListViewModel.instance.addTaskList();"><b class="icon-list-alt"></b>new list</a></li>
+              <li><a href="javascript: Board.addBoard();"><b class="icon-th"></b>new board</a></li>
+              {% comment %}
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Add <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    {#<li><a href="javascript: Board.addBoard();">new board</a></li>#}
+                    {#<li><a href="javascript: TaskListViewModel.instance.addTaskList();">new list</a></li>#}
+                    {#<li class="divider"></li>#}
+                    {#<li class="nav-header">Nav header</li>#}
+                  </ul>
+                </li>
+              {% endcomment %}
             <li class="divider-vertical"></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="profile_icon" src="{{ user.get_profile.get_icon_url }}"> {% if user.first_name %}{{user.first_name|capfirst}}{% else %}{{user.username}}{% endif %}<b class="caret"></b></a>
