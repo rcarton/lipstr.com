@@ -27,7 +27,7 @@
           </ul>
           
           <script type="text/html" id="board-menu-item-template">
-            <a data-bind="html: titleDisplayed, attr: {'data-board-id': id, class: 'dropdown-toggle', 'id': 'board-' + id}, enableBootstrapDropdown: {}"></a>
+            <a data-bind="html: titleDisplayed, attr: {'data-board-id': id, 'data-toggle': 'dropdown', class: 'dropdown-toggle', 'id': 'board-' + id}, enableBootstrapDropdown: {}"></a>
                 <ul class="dropdown-menu">
                     <li><a data-bind="text: 'Rename board', click: renameBoard"></a></li>
                     <li><a data-bind="text: 'Delete board', click: deleteBoard"></a></li>

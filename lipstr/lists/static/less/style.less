@@ -373,6 +373,7 @@ li.list {
         
         li {
             
+            position: relative;
             font-size: 11px;
             line-height: 13px;
             border-bottom: 1px solid @greyborder; 
@@ -380,14 +381,30 @@ li.list {
             padding: 4px 4px 4px 7px;
             overflow: hidden;
             
+            a, a:active, a:visited {
+                color: @mediumgrey;   
+                
+                &:hover {
+                    //text-decoration: line-through;
+                    text-decoration: none;
+                }
+            }
+
+            &.crossed {
+            
+                a, a:active, a:visited {
+                    text-decoration: line-through;
+                }
+                
+                a:hover {
+                    //text-decoration: none;
+                }
+            }
+            
             &.dndover {
                 border-top: 3px solid @greyborder;
             }
-            
-            &.crossed {
-                text-decoration: line-through;
-            }
-            
+
             &:hover {
                cursor: pointer;
                .transition;
@@ -396,6 +413,28 @@ li.list {
             input {
                 width: 90%;
             }
+            
+            .list-item-menu {
+                display: none;
+                height: 13px;
+                position: absolute;
+                right: 2px;
+                top: 3px;
+                background: rgba(255, 255, 255, 0.90);
+                padding-left: 2px;
+                
+                i {
+                    opacity: 0.3;
+                    
+                    &:hover { 
+                        opacity: 0.9;
+                    }
+                }
+            }
+            &:hover .list-item-menu {
+                display: inline;
+            }
+            
         }
     }
     

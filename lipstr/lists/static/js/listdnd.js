@@ -122,7 +122,7 @@ function ListDND(obj) {
 			$('#block-placeholder').css('top', phY + 'px').css('left', phX + 'px');
 			$('.after-placeholder').each(function() {
 				$(this).removeClass('after-placeholder');
-				$(this).css('top', $(this).position().top - phHeight + 'px');
+				$(this).css('top', $(this).position().top - phHeight - 8 + 'px');
 			});
 			
 			// Update the blocks after the placeholder (re-using i and len here)
@@ -167,11 +167,11 @@ function TaskDND(obj, model, list, item) {
 		$(document).on('mousemove.TaskDND', self.mousemove);
 		
 		// Store the list if we are over one.
-		lists.on('mouseover.taskDND', function(e) { self.listover = e.currentTarget; });
+		lists.on('mouseenter.taskDND', function(e) { self.listover = e.currentTarget; });
 		lists.on('mouseleave.taskDND', function(e) { self.listover = null; });
 		
 		// Same for items, but we have to add a mouseup handler event
-		listitems.on('mouseover.taskDND mousemove.taskDND', function(e) {
+		listitems.on('mouseenter.taskDND mousemove.taskDND', function(e) {
 			if(!$(this).hasClass('dndover')) $(this).addClass('dndover');
 			self.itemover = e.currentTarget;
 			
@@ -249,8 +249,8 @@ function TaskDND(obj, model, list, item) {
 	 */
 	self.clear = function (e) {
 		$(document).off('mousemove.TaskDND mouseup.TaskDND');
-		lists.off('mouseover.taskDND mouseleave.taskDND');
-		listitems.off('mouseover.taskDND mouseleave.taskDND mouseup.taskDND');
+		lists.off('mouseenter.taskDND mouseleave.taskDND');
+		listitems.off('mouseenter.taskDND mouseleave.taskDND mouseup.taskDND');
 		$('.dndover').removeClass('dndover');
 		$(self.node).remove();
 	}

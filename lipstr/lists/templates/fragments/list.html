@@ -27,8 +27,8 @@
                 {# ---- List content ---- #}
                 <ul class="list-inner" data-bind="foreach: items, attr: {'data-id': id}, visible: items().length > 0">
                     
-                    <li data-bind="text: description, 
-                                   taskClick: {click: function() { 
+                    <li data-bind="taskClick: {click: function(e) { 
+                                                        if($(e.target).parent().hasClass('list-item-menu')){ return false;}
                                                          $data.editAttribute($parent, 'crossed', !$data.crossed());
                                                       }, 
                                                dragclick: function(e) { 
@@ -42,6 +42,12 @@
                                    attr: {'data-id': id,
                                           'class': crossed()?'crossed': ''
                                          }">
+                       <a data-bind="text: description"></a>
+                       <span class="list-item-menu">
+                           <i data-bind="attr: {'class': 'icon-edit'},
+                                         click: function(d, e) { e.stopImmediatePropagation(); $data.editItem($parent);}, clickBubble: false"></i>&nbsp;
+                           <i data-bind="attr: {'class': 'icon-remove'},
+                                         click: function(d, e) { $root.remTask($parent, $data); }, clickBubble: false"></i></span>
                     </li>
                     
                     

@@ -45,7 +45,7 @@ ko.bindingHandlers.taskClick = {
 
 ko.bindingHandlers.enableBootstrapDropdown = {
 		init:  function(element, valueAccessor, allBindingsAccessor, context) {
-			$(element).dropdown();
+			//$(element).dropdown();
 		},
 	    update: function(element, valueAccessor, allBindingAccessor, context) {
 	    }  
