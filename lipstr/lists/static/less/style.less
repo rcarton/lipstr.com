@@ -161,6 +161,7 @@ input[type="text"], input[type="password"] {
     top: 15%;
     left: 50%;
     margin-left: -120px; 
+    border-radius: 3px;
     
     h3 {
         font-size: 19px;
@@ -172,6 +173,8 @@ input[type="text"], input[type="password"] {
         border-bottom: 1px solid @greyborder;
         margin: 0 0 9px 0;
     }
+    
+    textarea { width: 97%; }
     
     .popup-content {
         margin-top: 9px;
@@ -190,10 +193,6 @@ input[type="text"], input[type="password"] {
 	@width: 340px;
 	width: @width;
 	margin-left: -@width/2;
-	
-	textarea { 
-	   width: 99%;
-	}
 	
 }
 #list-edit {

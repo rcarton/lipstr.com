@@ -69,6 +69,14 @@ def clean():
     run('rm -rf /tmp/%s /tmp/%s' % (APPNAME, FILENAME))
 
 
+def backup():
+    backup_folder = 'backup_%s_%s' % (APPNAME, VERSION)
+    run('mkdir -p /tmp/' + backup_folder)
+    with cd('/tmp/%s' % backup_folder):
+        run('rm -rf dump')
+        run('mongodump -d lipstr')
+        run('tar -czf %s_%s.tar.gz dump' % (APPNAME, VERSION))
+
 
 # TOOLS 
 def virtualenv(command):
