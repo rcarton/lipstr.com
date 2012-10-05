@@ -1,5 +1,6 @@
 from fabric.api import *
 import datetime, os
+import private_fab
 
 APPNAME = 'lipstr.com'
 VERSION = datetime.datetime.now().strftime('%Y%m%d_%H%M')
@@ -25,8 +26,6 @@ def up():
     collect_static()
     restart()
     clean()
-
-
 
 
 def pack():
@@ -70,12 +69,8 @@ def clean():
 
 
 def backup():
-    backup_folder = 'backup_%s_%s' % (APPNAME, VERSION)
-    run('mkdir -p /tmp/' + backup_folder)
-    with cd('/tmp/%s' % backup_folder):
-        run('rm -rf dump')
-        run('mongodump -d lipstr')
-        run('tar -czf %s_%s.tar.gz dump' % (APPNAME, VERSION))
+    with cd(DEVROOT):
+        run('./backup.sh %(host)s %(user)s %(password)s' % private_fab.FTP_BACKUP)
 
 
 # TOOLS 

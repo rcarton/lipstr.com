@@ -19,3 +19,5 @@ migrations/
 notes/
 private_settings.py
 *.swp
+private_fab.py
+bootstrap/

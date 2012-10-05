@@ -88,3 +88,7 @@
         <div style="clear: both"></div>
     </div> 
 </div>
+
+<script>
+    var BOARDS = [{% for b in boards %} '{{ b.id }}' {% if not forloop.last %}, {% endif %} {% endfor %}];
+</script>
