@@ -37,6 +37,25 @@ var DEBUG_OFFLINE = false;
 var COLUMNWIDTH = 360;
 var GUTTERWIDTH = 20;
 
+function cleanOldLists() {
+	for (var id in localStorage) {
+		if (id.substr(0, 15) == "masonry-layout-") {
+			var boardid = id.substr(15);
+			var found = false;
+			for (var i in BOARDS) { if (BOARDS[i] == boardid) { found = true; break; }}
+			if (!found) { localStorage.removeItem("masonry-layout-" + boardid); }
+		}
+	}
+}
+
+function getCurrentBoard() {
+	if (TaskListViewModel.instance) {
+		return TaskListViewModel.instance.currentBoard();
+	}
+	
+	return BOARDS[0];
+}
+
 function Menu() {
 	var self = this;
 	self.newListText = ko.observable();
@@ -76,16 +95,24 @@ function initMasonry() {
 	
 	// Use a previously saved layout if there is one
 	//if (Modernizr.localstorage && Modernizr.applicationcache && localStorage['masonry-layout'] != undefined) {
-	if (localStorage['masonry-layout'] != undefined) {
-		options['layout'] = $.parseJSON(localStorage['masonry-layout']);
+	if (localStorage['masonry-layout-'+getCurrentBoard()] != undefined) {
+		options['layout'] = $.parseJSON(localStorage['masonry-layout-'+getCurrentBoard()]);
 	}
 	
 	$('#list-container > ul').masonry(options);
 }
 
-function reloadMasonry() { 
+function saveMasonry() {
+	$('#list-container > ul').masonry('saveLayout', getCurrentBoard()); 
+}
+function reloadMasonry() {
+	var options = {};
+	if (localStorage['masonry-layout-'+getCurrentBoard()] != undefined) {
+		options['layout'] = $.parseJSON(localStorage['masonry-layout-'+getCurrentBoard()]);
+	}
+	$('#list-container > ul').masonry(options);
 	$('#list-container > ul').masonry('reload'); 
-	$('#list-container > ul').masonry('saveLayout'); 
+	$('#list-container > ul').masonry('saveLayout', getCurrentBoard()); 
 }
 
 /**
@@ -783,5 +810,7 @@ TaskListViewModel.instance = new TaskListViewModel();
 ko.applyBindings(TaskListViewModel.instance);
 
 
-
+$(document).ready(function() {
+	cleanOldLists();
+});
 

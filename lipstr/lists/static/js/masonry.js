@@ -463,7 +463,7 @@
 		this.isLaidOut = true;
 	},
     
-	saveLayout : function() {
+	saveLayout : function(boardId) {
     	if (!Modernizr.localstorage || !Modernizr.applicationcache ) { if (callback) callback(); return false; }
     	
     	var o = this.options.layout;
@@ -479,8 +479,11 @@
 		}
     	
     	//console.log(o);
+    	if (!boardId) {
+    		console.log("ERR: saveLayout: no board id");
+    	}
     	
-    	localStorage['masonry-layout'] = ko.toJSON(o);	
+    	localStorage['masonry-layout-'+boardId] = ko.toJSON(o);	
 	},
 	
     // convienence method for working with Infinite Scroll

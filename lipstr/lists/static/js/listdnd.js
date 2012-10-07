@@ -12,7 +12,7 @@ function ListDND(obj) {
 	self.mouseOffsetY = 0;
 	
 	// Column where the block to move is
-	self.originCol =  Math.max(0, Math.floor($(obj).offset().left/self.instance.columnWidth))
+	self.originCol =  Math.max(0, Math.floor(($(obj).offset().left-self.obj.parent().offset().left)/self.instance.columnWidth))
 	self.destinationCol = -1;
 	self.destinationPos = -1;
 	
@@ -33,7 +33,9 @@ function ListDND(obj) {
 		
 		self.instance.colBricks[self.destinationCol].splice(self.destinationPos, 0, self.obj);
 		
-		$('#list-container > ul').masonry('saveLayout'); 
+		//saveMasonry();
+		//reloadMasonry();
+		$('#list-container > ul').masonry('saveLayout', getCurrentBoard()); 
 		$('#list-container > ul').masonry('reload'); 
 	}
 	
