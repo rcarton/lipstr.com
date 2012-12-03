@@ -165,6 +165,9 @@ Action.getEditItemAction = function(item, listId, attributes) {
 // add_list {type: 'add_list', what: <tasklist>}
 Action.getAddTaskListAction = function(tasklist) { return new Action('add_list', tasklist.toObj(), tasklist.id); }
 
+//move_list {type: 'move_list', what: <boardId>}
+Action.getMoveListAction = function(list, boardId) { return new Action('move_list', { newBoardId: boardId }, list.id); }
+
 //rem_list {type: 'rem_list', what: <tasklist>}
 Action.getRemListAction = function(list) { return new Action('rem_list', {}, list.id); }
 
@@ -551,7 +554,19 @@ function TaskListViewModel(id) {
     		self.saveLocal();
     		tl.focus();
     	}
-	}
+	};
+	
+	/**
+	 * Moves a list to a new board
+	 */
+	self.moveList = function(list, boardId) {
+		console.log('moving list ' + list.id + ' to board' + boardId);
+		
+		self.tasklists.remove(list);
+		self.actions.push(Action.getMoveListAction(list, boardId).toObj());
+		
+		self.synchronizeOrSave();
+	};
 	
 	self.remList = function(list) {
 		

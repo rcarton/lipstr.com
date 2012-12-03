@@ -21,3 +21,4 @@ private_settings.py
 *.swp
 private_fab.py
 bootstrap/
+lipstr/lists/static/bootstrap

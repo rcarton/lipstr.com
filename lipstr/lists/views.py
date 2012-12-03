@@ -9,7 +9,7 @@ from django.template.context import RequestContext
 from django.utils import simplejson
 from lists.actions import process_actions
 from lists.forms import SignupForm, PreferencesForm
-from lists.models import List
+from lists.models import List, Board
 
 @login_required
 def home(request):
@@ -152,10 +152,16 @@ def create_account(signup_form):
         
     user.save()
     
+    profile = user.get_profile()
     if signup_form['icon']: 
-        profile = user.get_profile()
         profile.icon = signup_form['icon'].value()
-        profile.save()
+    
+    # Create the default board
+    b = Board()
+    b.creator = user
+    b.title = 'home'
+    profile.boards.append(b)
+    profile.save()
         
     return {}
 

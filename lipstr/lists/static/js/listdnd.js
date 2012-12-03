@@ -1,8 +1,18 @@
-function ListDND(obj) {
+
+
+/**
+ * Drag and drop a list onto a different place on the board or move to a new board
+ * @param obj
+ * @param model
+ * @param list
+ */
+function ListDND(obj, model, list) {
 	var self = this;
 	var lists = $('li.list');
 	var listitems = $('ul.list-inner li');
 	
+	self.model = model;
+	self.list = list;
 	self.obj = $(obj).closest('li.list');
 	self.$masonry = $('#list-container > ul');
 	self.instance = $.data(self.$masonry[0], 'masonry');
@@ -16,32 +26,76 @@ function ListDND(obj) {
 	self.destinationCol = -1;
 	self.destinationPos = -1;
 	
+	// boards
+	self.boards = $('#board-list li');
+	self.boardover = null;
+	self.onNavBar = false;
 	
 	self.drag = function() {
 		
 		// Remove the object from the groupBlocks
 		self.removeFromColBricks();
 		
-		$(document).on('mousemove.ListDND', function(e) { self.showPlaceholder(e); self.followPointer(e); } );
+		// Board drop
+		self.boards.not('.active').on('mouseenter.ListDND', function(e) {
+			self.boardover = e.currentTarget; 
+			$(self.boardover).find('a').addClass('board-drop');
+			self.obj.find('.board-icon').addClass('board-over');
+		});
+		
+		self.boards.not('.active').on('mouseleave.ListDND', function(e) {
+			$(self.boardover).find('a').removeClass('board-drop');
+			self.boardover = null; 
+			self.obj.find('.board-icon').removeClass('board-over');
+		});
+		
+		$('.navbar').on('mouseenter.ListDND', function(e) { self.obj.addClass('dragged-over-navbar'); self.onNavBar = true; });
+		$('.navbar').on('mouseleave.ListDND', function(e) { self.obj.removeClass('dragged-over-navbar'); self.onNavBar = false; });
+		
+		self.createBoardIcon();
+		
+		$(document).on('mousemove.ListDND', function(e) {
+			// Show the placeholder only if the cursor is not over the navbar
+			if (!self.onNavBar) {
+				self.showPlaceholder(e);
+			}
+			self.followPointer(e); 
+		});
+		
 		$(document).on('mouseup.ListDND', self.drop);	
 		
 		$(self.obj).addClass('dragged');
-	}
+	};
 	
 	self.drop = function(e) {
-		self.clear();
 		
-		self.instance.colBricks[self.destinationCol].splice(self.destinationPos, 0, self.obj);
 		
-		//saveMasonry();
-		//reloadMasonry();
-		$('#list-container > ul').masonry('saveLayout', getCurrentBoard()); 
-		$('#list-container > ul').masonry('reload'); 
-	}
+		if (self.boardover) {
+			// Move the list from the current board to the new one
+			var boardId = $(self.boardover).find('a').attr('data-board-id');
+			
+			// Add to the new board
+			self.model.moveList(self.list, boardId);
+			
+			self.clear();
+		} else {
+			// Add it at the right place and save the board layout (nothing to save server side)
+			self.clear();
+			self.instance.colBricks[self.destinationCol].splice(self.destinationPos, 0, self.obj);
+			
+			$('#list-container > ul').masonry('saveLayout', getCurrentBoard()); 
+			$('#list-container > ul').masonry('reload'); 
+		}
+		
+	};
 	
 	self.clear = function() {
 		
 		$(document).off('mousemove.ListDND mouseup.ListDND');
+		$('.navbar').off('mouseenter.ListDND mouseleave.ListDND');
+		self.boards.not('.active').find('a').off('mouseenter.ListDND mouseleave.ListDND').removeClass('board-drop');
+		self.obj.find('.board-icon').remove();
+		self.obj.removeClass('dragged-over-navbar');
 		
 		// Remove the placeholder and replace all the blocks
 		$('.after-placeholder').each(function() {
@@ -51,7 +105,7 @@ function ListDND(obj) {
 		$('#block-placeholder').remove();
 		$(self.obj).css('z-index', 100);
 		$(self.obj).removeClass('dragged');
-	}
+	};
 	
 	self.followPointer = function(e) {
 		self.mouseOffsetX = self.mouseOffsetX || $(self.obj).position().left - e.pageX;
@@ -62,7 +116,7 @@ function ListDND(obj) {
 		$(self.obj).css('left', e.pageX + self.mouseOffsetX + 'px');
 		$(self.obj).css('top', e.pageY + self.mouseOffsetY + 'px')
 		$(self.obj).css('z-index', 206);	
-	}
+	};
 	
 	self.removeFromColBricks = function() {
 		var i=0, len = self.instance.colBricks[self.originCol].length;
@@ -70,7 +124,33 @@ function ListDND(obj) {
 			if (self.instance.colBricks[self.originCol][i].attr('data-id') == $(self.obj).attr('data-id')) break;
 		}
 		if (i < self.instance.colBricks[self.originCol].length) self.instance.colBricks[self.originCol].splice(i, 1);
-	}
+	};
+	
+	/**
+	 * this is for the icon to drop a list on a board name
+	 */
+	self.createBoardIcon = function(e) {
+		
+		var icon = document.createElement('div');
+		var $icon = $(icon);
+		
+		$icon.addClass('board-icon');
+		
+		self.obj.append($icon);
+		
+		var adjustToPointer = function(e) {
+			var mx = e.pageX - $(self.obj).offset().left + 15;
+			var my = e.pageY - $(self.obj).offset().top + 3;
+			
+			//console.log('top: '+ $(self.obj).position().top + 'mouse: ' + e.pageY + 'offset: ' + self.mouseOffsetY);
+			
+			$icon.css('left', mx + 'px');
+			//$icon.css('top', '5px');
+			$icon.css('top',  my + 'px')
+		};
+		
+		$(document).one('mousemove.ListDND.boardIcon', adjustToPointer);
+	};
 	
 	self.showPlaceholder = function(event) {
 		
@@ -137,7 +217,7 @@ function ListDND(obj) {
 				}
 			}
 		}
-	}
+	};
 }
 
 function TaskDND(obj, model, list, item) {
@@ -239,12 +319,12 @@ function TaskDND(obj, model, list, item) {
 		self.model.moveItem(self.item, self.list, destListModel, position);
 		
 		
-	}
+	};
 	
 	self.mousemove = function(e) {
 		$(self.node).css('left', e.pageX + mouseOffsetX + 'px');
 		$(self.node).css('top', e.pageY + mouseOffsetY + 'px');
-	}
+	};
 	
 	/**
 	 * Reset everything
@@ -281,5 +361,5 @@ function TaskDND(obj, model, list, item) {
 		//pointer-events:none;
 		
 		$(document.body).append(self.node);
-	}
+	};
 }

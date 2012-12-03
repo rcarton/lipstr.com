@@ -248,8 +248,7 @@ button.sp-choose { .button3d-thin; }
 #block-placeholder {
     position: absolute;
     z-index: 205;
-    border: 2px dashed rgba(170, 170, 170, 0.4)
-    ;
+    border: 2px dashed rgba(170, 170, 170, 0.4);
     .border-radius(4px);	
     width: 360px;
     margin: 10px 0 0 0;
@@ -289,6 +288,33 @@ li.list {
     
     &.dragged {
         .transform(rotate(1.3deg));
+        pointer-events:none;
+        
+        * {
+            pointer-events:none;
+        }
+    }
+    
+    &.dragged-over-navbar .li-wrapper {
+        display: none;
+    }
+    
+    &.dragged-over-navbar .board-icon {
+        display: block;
+    }
+    
+    .board-icon {
+        position: relative;
+        width: 14px;
+        height: 14px;
+        content: " ";
+        display: none;
+        background-image: url("http://remi-virtualbox:5000/static/bootstrap/less/../img/glyphicons-halflings.png");
+        background-position: -264px -24px;
+        
+        &.board-over {
+            background-position: -408px -96px;
+        }
     }
     
     .li-wrapper {

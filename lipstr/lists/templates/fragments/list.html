@@ -10,7 +10,7 @@
                 <div class="li-header" data-bind="attr: {style: 'background-color: '+ color() },
                                                   taskClick: {
                                                     dragclick: function(e) { 
-                                                      var dnd = new ListDND(e.currentTarget);
+                                                      var dnd = new ListDND(e.currentTarget, $root, $data);
                                                       dnd.drag(); 
                                                     }
                                                   }">

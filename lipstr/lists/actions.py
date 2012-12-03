@@ -108,6 +108,37 @@ def add_list(action, user):
     return l;
 
 
+def move_list(action, user):
+    """
+    Moves a list from a board to another.
+    
+    {
+        'type': 'move_list',
+        'listId': <list id>,
+        'boardId': <board id>,
+        'what': {
+                    'newBoardId': <newBoardId>
+                } 
+    }
+    """
+    try:
+        l = List.objects.get(id=action['listId'])
+        verify_permission(l, user)
+        
+        # Move the list
+        userprofile = user.get_profile()
+        
+        new_board = userprofile.get_board(action['what']['newBoardId'])
+        new_board.lists.append(action['listId'])
+        
+        board = userprofile.get_board(action['boardId'])
+        board.lists.remove(action['listId'])
+        
+        userprofile.save()
+    except:
+        # the list or the board doesn't exist.
+        pass
+    
 def rem_list(action, user):
     """
     Removes the list from the database.
@@ -124,7 +155,7 @@ def rem_list(action, user):
         verify_permission(l, user)
         l.delete()
         
-        # Add the list to the user's lists
+        # Remove
         userprofile = user.get_profile()
         board = userprofile.get_board(action['boardId'])
         board.lists.remove(action['listId'])
@@ -286,6 +317,7 @@ def process_actions(actions, user):
                'rem_task': rem_task,
                'add_list': add_list,
                'rem_list': rem_list,
+               'move_list': move_list,
                'edit_list': edit_list,
                'edit_item': edit_item,
                'add_board': add_board,

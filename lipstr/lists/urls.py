@@ -1,6 +1,5 @@
 from django.conf.urls.defaults import patterns, url
 
-
 urlpatterns = patterns('lists.views',
     url(r'^login$', 'login', name='login'),
     url(r'^preferences$', 'preferences', name='preferences'),
