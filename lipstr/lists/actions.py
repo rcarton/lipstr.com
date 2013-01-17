@@ -177,7 +177,7 @@ def edit_list(action, user):
     }
     """
     
-    editable_attributes = ('title', 'color')
+    editable_attributes = ('title', 'color', 'collapse')
     
     l = List.objects.get(id=action['listId'])
     verify_permission(l, user)

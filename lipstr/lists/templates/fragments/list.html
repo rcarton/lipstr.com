@@ -3,7 +3,10 @@
 <div id="list-container">
     
     <ul data-bind="foreach: tasklists, visible: tasklists().length > 0">
-        <li class="list" data-bind="attr: {'data-id': id, 'data-masonry-id': id}">
+        <li data-bind="attr: {'data-id': id,
+                              'data-masonry-id': id,
+                              'class': 'list' + ($data.collapse()?' collapsed':'')
+                             }">
             <div class="li-wrapper">
                 
                 {# ---- List header ---- #}
@@ -12,9 +15,10 @@
                                                     dragclick: function(e) { 
                                                       var dnd = new ListDND(e.currentTarget, $root, $data);
                                                       dnd.drag(); 
-                                                    }
+                                                    },
+                                                    dblclick: $data.toggleCollapse
                                                   }">
-                    <div class="li-menu" data-bind="click: TaskList.toggleLiMenu">
+                    <div class="li-menu" data-bind="click: $data.toggleLiMenu">
                         <div class="li-button"> </div>
                         <ul class="li-menu-dropdown">
                             <li><a href="" data-bind="click: function() { $data.editList(); }">edit list</a></li>

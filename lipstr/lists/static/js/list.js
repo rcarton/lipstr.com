@@ -276,6 +276,7 @@ function TaskList(data) {
 	self.id = data.id;
 	self.title = ko.observable(data.title);
 	self.color = ko.observable((data.color == undefined)?'#ffffff':data.color);
+	self.collapse = ko.observable((data.collapse == undefined)?false:data.collapse);
 	
 	
 	for (var t in data.items)
@@ -291,7 +292,7 @@ function TaskList(data) {
 			}
 		}
 		return undefined;
-	}
+	};
 	
 	// Operations 
     self.addTask = function() {
@@ -324,13 +325,22 @@ function TaskList(data) {
     
     self.remTask = function(ptask) {
     	self.items.remove(function(task) { return task.id == ptask.id; });
-    }
+    };
     
     self.sort = function() {
     	self.items.sort(function(left, right) { 
     		return left.position == right.position ? 0 : (left.position < right.position ? -1 : 1);
 		});
-    }
+    };
+    
+    /**
+     * Collapses or uncollapses the list
+     */
+    self.toggleCollapse = function() {
+    	self.collapse(!self.collapse());
+		TaskListViewModel.instance.actions.push(Action.getEditListAction(self, {collapse: self.collapse()}).toObj());
+		TaskListViewModel.instance.synchronizeOrSave();
+    };
     
     self.editList = function() {
     	var editListDiv = $('#list-edit');
@@ -390,18 +400,60 @@ function TaskList(data) {
     	
     	editListDiv.attr('data-listId', self.id);
     	editListDiv.show();	
-    }
+    };
+    
+    self.toggleLiMenu = function(data, e) {
+    	
+    	var jTarget = $(e.currentTarget);
+    	var jParent = jTarget.parents('.li-wrapper');
+    	var menu = jTarget.find('ul');
+    	
+    	// Clean other menus
+    	TaskList.cleanMenu($('.li-wrapper').not(jParent));
+    	
+    	if (menu.css('display') == 'block') {
+    		TaskList.cleanMenu(jParent);
+    		return;
+    	}
+    	
+    	// Toggle the dropdown menu
+    	menu.toggle();
+    	e.stopPropagation();
+    	
+    	var jList = $('ul.list-inner[data-id="' + data.id + '"]');
+    	
+    	var hideList = function() {
+    		// Hide the list
+    		var mask = document.createElement('div');
+    		mask.setAttribute('class', 'mask');
+    		mask.style.position = 'absolute';
+    		mask.style.top = jList.position().top + 'px';
+    		mask.style.left = jList.position().left + 'px';
+    		mask.style.width = jList.width() + 'px';
+    		mask.style.height = jList.height() + 'px';
+    		mask.style.background = 'rgba(255,255,255, 0.85)';
+    		mask.style.display = 'none';
+    		
+    		$(mask).css('z-index', '1');
+    		jParent.append(mask);
+    		$(mask).fadeIn(200);
+    	};
+    	
+    	// Mask the list if it is not collapsed only
+    	if (!self.collapse()) { hideList(); }
+
+    };
     
     self.toObj = function() {
     	return { id: self.id, title: self.title, color: self.color, list: $.map(self.items(), function(item) { return item.toObj(); }) };
-    }
+    };
     self.toJSON = function() {
     	return ko.toJSON(self.toObj());
-    }
+    };
     
     self.focus = function() {
     	$('[data-id=' + self.id + '] .add-task').focus();
-    }
+    };
     
 }
 /**
@@ -410,45 +462,12 @@ function TaskList(data) {
 TaskList.getTaskList = function(title) {
 	var data = {id: 'tmp_' + getRandomId(), title: title, color: getRandomColor(), items: new Array()};
 	return new TaskList(data);
-}
+};
 TaskList.focusLast = function() {
 	$('.add-task').last().focus();
-}
-TaskList.cleanMenu = function(jObj) { jObj.find('.mask').remove(); jObj.find('.li-menu-dropdown').hide(); }
-TaskList.toggleLiMenu = function(data, e) {
-	
-	var jTarget = $(e.currentTarget);
-	var jParent = jTarget.parents('.li-wrapper');
-	var menu = jTarget.find('ul');
-	
-	// Clean other menus
-	TaskList.cleanMenu($('.li-wrapper').not(jParent));
-	
-	if (menu.css('display') == 'block') {
-		TaskList.cleanMenu(jParent);
-		return;
-	}
-	
-	// Toggle the dropdown menu
-	menu.toggle();
-	e.stopPropagation();
-	
-	var jList = $('ul.list-inner[data-id="' + data.id + '"]');
-	// Hide the list
-	var mask = document.createElement('div');
-	mask.setAttribute('class', 'mask');
-	mask.style.position = 'absolute';
-	mask.style.top = jList.position().top + 'px';
-	mask.style.left = jList.position().left + 'px';
-	mask.style.width = jList.width() + 'px';
-	mask.style.height = jList.height() + 'px';
-	mask.style.background = 'rgba(255,255,255, 0.85)';
-	mask.style.display = 'none';
-	
-	$(mask).css('z-index', '1');
-	jParent.append(mask);
-	$(mask).fadeIn(200);
-}
+};
+TaskList.cleanMenu = function(jObj) { jObj.find('.mask').remove(); jObj.find('.li-menu-dropdown').hide(); };
+
 
 function Board(id, title) {
 	var self = this;

@@ -6,6 +6,7 @@ from djangotoolbox.fields import ListField, EmbeddedModelField
 import hashlib
 import urllib
 
+    
 class List(models.Model):
     """This is a generic list."""
     
@@ -14,7 +15,8 @@ class List(models.Model):
     when = models.DateField(auto_now_add=True)
     creator = models.ForeignKey(User)
     items = ListField(EmbeddedModelField('Item'))
-    
+    collapse = models.BooleanField(default=False)
+        
     def to_obj(self):
         return {
                'id': self.id,
@@ -22,7 +24,8 @@ class List(models.Model):
                'color': self.color,
                'when': str(self.when),
                'creator': self.creator.id,
-               'items': sorted([item.to_obj() for item in self.items], key= lambda item: item['position'])
+               'items': sorted([item.to_obj() for item in self.items], key= lambda item: item['position']),
+               'collapse': self.collapse,
                }
     
     def to_json(self):

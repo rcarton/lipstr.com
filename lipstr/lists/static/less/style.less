@@ -390,8 +390,6 @@ li.list {
         }
     }
     
-    
-    
     ul.list-inner {
         
         /*margin-top: @list_title_height;*/
@@ -473,6 +471,12 @@ li.list {
         border: 0;*/
         text-align: center;
         background-color: transparent;
+    }
+    
+    /* Collapse the list! */
+    &.collapsed {
+        ul.list-inner {display: none;}
+        .add-task {display: none;}
     }
 }
 
