@@ -160,6 +160,7 @@ def create_account(signup_form):
     b = Board()
     b.creator = user
     b.title = 'home'
+    b.id = 'home'
     profile.boards.append(b)
     profile.save()
         
