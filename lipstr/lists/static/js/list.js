@@ -411,6 +411,9 @@ function TaskList(data) {
     	// Clean other menus
     	TaskList.cleanMenu($('.li-wrapper').not(jParent));
     	
+    	// If click anywhere, clean the list
+    	$(document).one('click', function() {TaskList.cleanMenu(jParent);});
+    	
     	if (menu.css('display') == 'block') {
     		TaskList.cleanMenu(jParent);
     		return;
