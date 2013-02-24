@@ -327,6 +327,23 @@ function TaskList(data) {
     	self.items.remove(function(task) { return task.id == ptask.id; });
     };
     
+    
+    /**
+     * Removes the tasks marked as done
+     */
+    self.cleanItems = function() {
+    	var items = self.items();
+    	var tlm = TaskListViewModel.instance;
+    	for (var i in items) {
+    		if (items[i].crossed()) {
+    			tlm.actions.push(Action.getRemTaskAction(items[i], self.id).toObj());
+    	    	self.remTask(items[i]);
+    		}
+    	}
+    	
+    	tlm.synchronizeOrSave();
+    };
+    
     self.sort = function() {
     	self.items.sort(function(left, right) { 
     		return left.position == right.position ? 0 : (left.position < right.position ? -1 : 1);
@@ -411,13 +428,15 @@ function TaskList(data) {
     	// Clean other menus
     	TaskList.cleanMenu($('.li-wrapper').not(jParent));
     	
-    	// If click anywhere, clean the list
-    	$(document).one('click', function() {TaskList.cleanMenu(jParent);});
-    	
+
     	if (menu.css('display') == 'block') {
     		TaskList.cleanMenu(jParent);
     		return;
     	}
+    	
+    	// If click anywhere, clean the list
+    	//$(document).not(menu[0]).one('click', function() { TaskList.cleanMenu(jParent);});
+    	
     	
     	// Toggle the dropdown menu
     	menu.toggle();

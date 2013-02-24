@@ -1,6 +1,6 @@
 # Django settings for lipstr project.
 import os
-from private_settings import DEBUG, DATABASES, SECRET_KEY, SENTRY_DSN, GOOGLE_API_CLIENT_ID, GOOGLE_API_CLIENT_SECRET, GOOGLE_API_CALLBACK_URI
+from private_settings import *
 
 DJANGO_ROOT = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), '..')
